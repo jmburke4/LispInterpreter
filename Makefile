@@ -5,7 +5,7 @@ BIN_DIR = bin
 
 # Define the C compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -I$(INC_DIR)
+CFLAGS = -Wall -Wextra -std=c11 -I$(INC_DIR) -g
 
 # Find all C source files in the source directory
 SRCS = $(wildcard $(SRC_DIR)/*.c)
@@ -14,7 +14,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%.o,$(SRCS))
 
 # Define the executable name
-TARGET = $(BIN_DIR)/my_program
+TARGET = $(BIN_DIR)/a
 
 .PHONY: all clean
 

@@ -1,0 +1,28 @@
+{
+	"configurations": [
+		{
+			"MIMode": "gdb",
+			"cwd": ".",
+			"externalConsole": true,
+			"miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+			"name": "Debug with Makefile",
+			"preLaunchTask": "build",
+			"program": "${workspaceFolder}/bin/a.exe",
+			"request": "launch",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"ignoreFailures": true,
+					"text": "-enable-pretty-printing"
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"ignoreFailures": true,
+					"text": "-gdb-set disassembly-flavor intel"
+				}
+			],
+			"type": "cppdbg"
+		}
+	],
+	"version": "0.2.0"
+}

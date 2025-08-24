@@ -1,0 +1,18 @@
+{
+	"tasks": [
+		{
+			"command": "make",
+			"detail": "Runs 'make' to build the project.",
+			"group": {
+				"isDefault": true,
+				"kind": "build"
+			},
+			"label": "build",
+			"problemMatcher": [
+				"$gcc"
+			],
+			"type": "shell"
+		}
+	],
+	"version": "2.0.0"
+}
