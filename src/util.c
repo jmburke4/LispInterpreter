@@ -34,3 +34,24 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
 void util_printBuffer(const char* string){
     fprintf(stdout, "%s\n", string);
 }
+
+int util_isNum(char t){
+    if ((int)t >= 48 && (int)t <= 57){
+        return 1;
+    }
+    return 0;
+}
+
+int util_isAlpha(char t){
+    if ((int)t >= 97 && (int)t <= 122){
+        return 1;
+    }
+    else if ((int)t >= 65 && (int)t <= 90){
+        return 1;
+    }
+    return 0;
+}
+
+int util_isAlphaNum(char t){
+    return util_isNum(t) || util_isAlpha(t);
+}

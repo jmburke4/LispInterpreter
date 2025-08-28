@@ -15,4 +15,19 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb);
 /// @param string The string to print
 void util_printBuffer(const char* string);
 
+/// @brief Checks if a char is a num
+/// @param t The char to check
+/// @return 0 false, 1 true
+int util_isNum(char t);
+
+/// @brief Checks if a char is a letter (case insensitive)
+/// @param t The char to check
+/// @return 0 false, 1 true
+int util_isAlpha(char t);
+
+/// @brief Checks if a char is a letter (case insensitive) or a number
+/// @param t The char to check
+/// @return 0 false, 1 true
+int util_isAlphaNum(char t);
+
 #endif
