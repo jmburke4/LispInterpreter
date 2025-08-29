@@ -39,11 +39,9 @@ void lexer_lex(int current, const char* tokens, const char* line){
             lexer_lex(current + 1, tokens, line);
         }
         else if (util_isNum(t)){
-            //fprintf(stdout, "Add L_NUM\n");
-
             // multi char
             char* t_str = &t;
-            lexer_lexNum(current + 1, t, line);
+            lexer_lexNum(current + 1, t_str, line);
         }
         else if (util_isAlpha(t)){
             fprintf(stdout, "Add L_ALPHA\n");
@@ -68,8 +66,8 @@ void lexer_lexNum(int current, char* lexeme, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isNum(t)){
-            fprintf("\tlexeme: %s\n", lexeme);
-            lexer_lexNum(current + 1, strncat(lexeme, t, 1), line);
+            char* t_str = &t;
+            lexer_lexNum(current + 1, strncat(lexeme, t_str, 1), line);
         }
         else {
             fprintf(stdout, "ADD %s\n", lexeme);
