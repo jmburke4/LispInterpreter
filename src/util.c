@@ -55,7 +55,3 @@ int util_isAlpha(char t){
 int util_isAlphaNum(char t){
     return util_isNum(t) || util_isAlpha(t);
 }
-
-char* util_strConcat(){
-
-}

@@ -40,7 +40,8 @@ void lexer_lex(int current, const char* tokens, const char* line){
         }
         else if (util_isNum(t)){
             // multi char
-            char* t_str = &t;
+            char t_str[MAX_WORD_LENGTH];
+            t_str[0] = t;
             lexer_lexNum(current + 1, t_str, line);
         }
         else if (util_isAlpha(t)){
@@ -67,7 +68,8 @@ void lexer_lexNum(int current, char* lexeme, const char* line){
         char t = line[current];
         if (util_isNum(t)){
             char* t_str = &t;
-            lexer_lexNum(current + 1, strncat(lexeme, t_str, 1), line);
+            strncat(lexeme, t_str, 1);
+            lexer_lexNum(current + 1, lexeme, line);
         }
         else {
             fprintf(stdout, "ADD %s\n", lexeme);

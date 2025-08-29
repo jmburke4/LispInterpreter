@@ -4,9 +4,10 @@
 //#include "parser.h"
 
 int main() {
+    int result = 0;
     // This is the Windows relative path
     // can also use absolute path "R:\\LispInterpreter\\tests\\s1.txt"
-    int result = util_readFile("R:\\LispInterpreter\\tests\\t1.txt", 256, lexer_scanTokens);
+    result = util_readFile("R:\\LispInterpreter\\tests\\t1.txt", 256, lexer_scanTokens);
 
     return result;
 }
