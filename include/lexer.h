@@ -10,7 +10,9 @@ typedef enum {
     L_IDENTIFIER,
     L_OPAREN,
     L_CPAREN,
-    L_NUMBER
+    L_NUMBER,
+    L_SQUOTE,
+    L_DQUOTE,
 } TokenType;
 
 typedef struct {
@@ -24,6 +26,8 @@ void lexer_scanTokens(const char* line);
 
 void lexer_lex(int current, const char* tokens, const char* line);
 
-void lexer_lexNum(int current, char* lexeme, const char* line);
+void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* line);
+
+void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* line);
 
 #endif

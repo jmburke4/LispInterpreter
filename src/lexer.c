@@ -6,9 +6,9 @@
 void lexer_scanTokens(const char* line){
     //gll_t* tokens = gll_init();
 
-    lexer_lex(0, "placeholder", line);
+    lexer_lex(0, "NOT_IMPLEMENTED", line);
 
-    printf("EOL\n");
+    // add tokens to master token tree
 }
 
 void lexer_lex(int current, const char* tokens, const char* line){
@@ -42,37 +42,56 @@ void lexer_lex(int current, const char* tokens, const char* line){
             // multi char
             char t_str[MAX_WORD_LENGTH];
             t_str[0] = t;
-            lexer_lexNum(current + 1, t_str, line);
+            t_str[1] = '\0';
+            lexer_lexNum(current + 1, tokens, t_str, line);
         }
         else if (util_isAlpha(t)){
-            fprintf(stdout, "Add L_ALPHA\n");
-
             // multi char
+            char t_str[MAX_WORD_LENGTH];
+            t_str[0] = t;
+            t_str[1] = '\0';
+            lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == ' '){
             // skip space
             lexer_lex(current + 1, tokens, line);
         }
+        else if (t == '\r' || t == '\n'){
+            // Exit on carriage return or new line
+        }
         else{
             fprintf(stderr, "DEFAULT: \'%c\'\n", t);
         }
     }
-    else {
-        // Reached end of the line
-        return;
-    }
+    fprintf(stdout, "\tEOL");
 }
 
-void lexer_lexNum(int current, char* lexeme, const char* line){
+void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isNum(t)){
             char* t_str = &t;
             strncat(lexeme, t_str, 1);
-            lexer_lexNum(current + 1, lexeme, line);
+            lexer_lexNum(current + 1, tokens, lexeme, line);
         }
         else {
             fprintf(stdout, "ADD %s\n", lexeme);
+            lexer_lex(current, tokens, line);
+        }
+    }
+}
+
+void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* line){
+    if (current < (int)strlen(line)){
+        char t = line[current];
+        if (util_isAlpha(t)){
+            char* t_str = &t;
+            strncat(lexeme, t_str, 1);
+            lexer_lexAlpha(current + 1, tokens, lexeme, line);
+        }
+        else {
+            fprintf(stdout, "ADD %s\n", lexeme);
+            lexer_lex(current, tokens, line);
         }
     }
 }
