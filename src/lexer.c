@@ -4,10 +4,9 @@
 #include "lexer.h"
 
 void lexer_scanTokens(const char* line){
-    //gll_t* tokens = gll_init();
-
     lexer_lex(0, "NOT_IMPLEMENTED", line);
 
+    fprintf(stdout, "EOL\n");
     // add tokens to master token tree
 }
 
@@ -63,7 +62,6 @@ void lexer_lex(int current, const char* tokens, const char* line){
             fprintf(stderr, "DEFAULT: \'%c\'\n", t);
         }
     }
-    fprintf(stdout, "\tEOL");
 }
 
 void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* line){
