@@ -14,25 +14,25 @@ void lexer_lex(int current, const char* tokens, const char* line){
     if (current <= (int)strlen(line)){
         char t = line[current];
         if (t == '('){
-            fprintf(stdout, "Add L_OPAREN\n");
+            fprintf(stdout, "\tAdd L_OPAREN\n");
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == ')'){
-            fprintf(stdout, "Add L_CPAREN\n");
+            fprintf(stdout, "\tAdd L_CPAREN\n");
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            fprintf(stdout, "Add L_SQUOTE\n");
+            fprintf(stdout, "\tAdd L_SQUOTE\n");
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\"'){
-            fprintf(stdout, "Add L_DQUOTE\n");
+            fprintf(stdout, "\tAdd L_DQUOTE\n");
 
             // single char
             lexer_lex(current + 1, tokens, line);
@@ -55,8 +55,8 @@ void lexer_lex(int current, const char* tokens, const char* line){
             // skip space
             lexer_lex(current + 1, tokens, line);
         }
-        else if (t == '\r' || t == '\n'){
-            // Exit on carriage return or new line
+        else if (t == '\r' || t == '\n' || t == ';'){
+            // Exit on carriage return or new line or comment
         }
         else{
             fprintf(stderr, "DEFAULT: \'%c\'\n", t);
@@ -73,7 +73,7 @@ void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* lin
             lexer_lexNum(current + 1, tokens, lexeme, line);
         }
         else {
-            fprintf(stdout, "ADD %s\n", lexeme);
+            fprintf(stdout, "\tAdd %s\n", lexeme);
             lexer_lex(current, tokens, line);
         }
     }
@@ -88,7 +88,7 @@ void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* l
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            fprintf(stdout, "ADD %s\n", lexeme);
+            fprintf(stdout, "\tAdd %s\n", lexeme);
             lexer_lex(current, tokens, line);
         }
     }
