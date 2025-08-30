@@ -34,21 +34,21 @@ void lexer_scanTokens(const char* line, TokenList* list);
 /// @param current The current index within the line being scanned
 /// @param tokens The list of tokens
 /// @param line The line to scan
-void lexer_lex(int current, const char* tokens, const char* line);
+void lexer_lex(int current, TokenList* tokens, const char* line);
 
 /// @brief The recursive function to process multi-char numbers
 /// @param current The current index within the line being scanned
 /// @param tokens The list of tokens
 /// @param lexeme The multi-char number being scanned
 /// @param line The line to scan
-void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* line);
+void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line);
 
 /// @brief The recursive function to process multi-char strings
 /// @param current The current index within the line being scanned
 /// @param tokens The list of tokens
 /// @param lexeme The multi-char string being scanned
 /// @param line The line to scan
-void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* line);
+void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* line);
 
 /// @brief Allocate memory for a new list of tokens
 /// @return A pointer to a TokenList struct
@@ -58,7 +58,7 @@ TokenList* lexer_initTokenList();
 /// @param val The char or c-string value of the token
 /// @param type The token type
 /// @return A pointer to a new token
-Token* lexer_initToken(const char* val, TokenType type);
+Token* lexer_initToken(char* val, TokenType type);
 
 /// @brief Append new token to the end of the list
 /// @param list The list to append the token to

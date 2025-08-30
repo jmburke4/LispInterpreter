@@ -5,35 +5,43 @@
 #include "lexer.h"
 
 void lexer_scanTokens(const char* line, TokenList* list){
-    lexer_lex(0, "NOT_IMPLEMENTED", line);
+    lexer_lex(0, list, line);
 
     fprintf(stdout, "EOL\n");
     // add tokens to master token tree
 }
 
-void lexer_lex(int current, const char* tokens, const char* line){
+void lexer_lex(int current, TokenList* tokens, const char* line){
     if (current <= (int)strlen(line)){
         char t = line[current];
         if (t == '('){
-            fprintf(stdout, "\tAdd L_OPAREN\n");
+            // fprintf(stdout, "\tAdd L_OPAREN\n");
+
+            lexer_addToken(tokens, "(", L_OPAREN);
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == ')'){
-            fprintf(stdout, "\tAdd L_CPAREN\n");
+            // fprintf(stdout, "\tAdd L_CPAREN\n");
+
+            lexer_addToken(tokens, ")", L_CPAREN);
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            fprintf(stdout, "\tAdd L_SQUOTE\n");
+            // fprintf(stdout, "\tAdd L_SQUOTE\n");
+
+            lexer_addToken(tokens, "\'", L_SQUOTE);
 
             // single char
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\"'){
-            fprintf(stdout, "\tAdd L_DQUOTE\n");
+            // fprintf(stdout, "\tAdd L_DQUOTE\n");
+
+            lexer_addToken(tokens, "\"", L_DQUOTE); 
 
             // single char
             lexer_lex(current + 1, tokens, line);
@@ -65,7 +73,7 @@ void lexer_lex(int current, const char* tokens, const char* line){
     }
 }
 
-void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* line){
+void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isNum(t)){
@@ -74,13 +82,14 @@ void lexer_lexNum(int current, const char* tokens, char* lexeme, const char* lin
             lexer_lexNum(current + 1, tokens, lexeme, line);
         }
         else {
-            fprintf(stdout, "\tAdd %s\n", lexeme);
+            // fprintf(stdout, "\tAdd %s\n", lexeme);
+            lexer_addToken(tokens, lexeme, L_NUMBER);
             lexer_lex(current, tokens, line);
         }
     }
 }
 
-void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* line){
+void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isAlpha(t)){
@@ -89,7 +98,8 @@ void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* l
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            fprintf(stdout, "\tAdd %s\n", lexeme);
+            // fprintf(stdout, "\tAdd %s\n", lexeme);
+            lexer_addToken(tokens, lexeme, L_IDENTIFIER);
             lexer_lex(current, tokens, line);
         }
     }
@@ -105,10 +115,13 @@ TokenList* lexer_initTokenList(){
     return list;
 }
 
-Token* lexer_initToken(const char* val, TokenType type){
+Token* lexer_initToken(char* val, TokenType type){
     Token* node = (Token*)malloc(sizeof(Token));
     
-    node->val = val; // This isn't gonna work
+    node->val = malloc(sizeof(char*) * strlen(val));
+    strncpy(node->val, val, strlen(val));
+
+    //node->val = val; // This isn't gonna work
     node->type = type;
     node->prev = NULL;
     node->next = NULL;
@@ -123,8 +136,8 @@ int lexer_addToken(TokenList* list, char* val, TokenType type){
         list->first = node;
     }
     else {
-        list->last->next = node;
-        node->prev = list->last;
+        list->last->next = (struct Token*)node;
+        node->prev = (struct Token*)list->last;
     }
     list->last = node;
     list->size++;
