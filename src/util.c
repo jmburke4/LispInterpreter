@@ -1,7 +1,7 @@
 #include "util.h"
 #include <stdio.h>
 
-int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
+int util_readFile(const char* filePath, int maxLineLength, TokenList* list, callback_ptr cb){
     FILE* fptr;
     char buffer[maxLineLength];
     
@@ -9,11 +9,11 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
 
     if (fptr == NULL) {
         perror("Error opening file");
-        return -1;
+        return UTIL_FAILURE;
     }
 
     while (fgets(buffer, maxLineLength, fptr) != NULL){
-        cb(buffer);
+        cb(buffer, list);
     }
 
     if (feof(fptr)){
@@ -25,7 +25,7 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
 
     if (fclose(fptr) != 0){
         perror("Error closing file");
-        return -1;
+        return UTIL_FAILURE;
     }
     
     return 0;
@@ -37,22 +37,22 @@ void util_printBuffer(const char* string){
 
 int util_isNum(char t){
     if ((int)t >= 48 && (int)t <= 57){
-        return 1;
+        return UTIL_TRUE;
     }
-    return 0;
+    return UTIL_FALSE;
 }
 
 int util_isAlpha(char t){
     if ((int)t >= 97 && (int)t <= 122){
-        return 1;
+        return UTIL_TRUE;
     }
     else if ((int)t >= 65 && (int)t <= 90){
-        return 1;
+        return UTIL_TRUE;
     }
     else if (t == '-' || t == '.'){ // For now, we'll allow a dash and a period as a regular letter
-        return 1;
+        return UTIL_TRUE;
     }
-    return 0;
+    return UTIL_FALSE;
 }
 
 int util_isAlphaNum(char t){

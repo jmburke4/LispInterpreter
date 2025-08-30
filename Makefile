@@ -5,7 +5,7 @@ BIN_DIR = bin
 
 # Define the C compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -I$(INC_DIR) -g
+CFLAGS = -Wall -Wextra -std=c11 -I$(INC_DIR) -g -Wno-unused-parameter
 
 # Find all C source files in the source directory
 SRCS = $(wildcard $(SRC_DIR)/*.c)

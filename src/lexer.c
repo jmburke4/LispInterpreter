@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "util.h"
 #include "lexer.h"
 
-void lexer_scanTokens(const char* line){
+void lexer_scanTokens(const char* line, TokenList* list){
     lexer_lex(0, "NOT_IMPLEMENTED", line);
 
     fprintf(stdout, "EOL\n");
@@ -92,4 +93,41 @@ void lexer_lexAlpha(int current, const char* tokens, char* lexeme, const char* l
             lexer_lex(current, tokens, line);
         }
     }
+}
+
+TokenList* lexer_initTokenList(){
+    TokenList* list = (TokenList*)malloc(sizeof(TokenList));
+    
+    list->size = 0;
+    list->first = NULL;
+    list->last = NULL;
+    
+    return list;
+}
+
+Token* lexer_initToken(const char* val, TokenType type){
+    Token* node = (Token*)malloc(sizeof(Token));
+    
+    node->val = val; // This isn't gonna work
+    node->type = type;
+    node->prev = NULL;
+    node->next = NULL;
+    
+    return node;
+}
+
+int lexer_addToken(TokenList* list, char* val, TokenType type){
+    Token* node = lexer_initToken(val, type);
+
+    if (list->size == 0){
+        list->first = node;
+    }
+    else {
+        list->last->next = node;
+        node->prev = list->last;
+    }
+    list->last = node;
+    list->size++;
+
+    return UTIL_SUCCESS;
 }
