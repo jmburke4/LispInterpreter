@@ -1,23 +1,24 @@
 #include "util.h"
 #include <stdio.h>
 
-int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
+int util_readFile(const char* filePath, int maxLineLength, TokenList* list, callback_ptr cb){
     FILE* fptr;
     char buffer[maxLineLength];
     
     fptr = fopen(filePath, "r");
 
     if (fptr == NULL) {
+        fprintf(stderr, "Error for filepath: \'%s\'\n", filePath);
         perror("Error opening file");
-        return -1;
+        return UTIL_FAILURE;
     }
 
     while (fgets(buffer, maxLineLength, fptr) != NULL){
-        cb(buffer);
+        cb(buffer, list);
     }
 
     if (feof(fptr)){
-        fprintf(stdout, "EOF\n");
+        //fprintf(stdout, "EOF\n");
     }
     else {
         perror("Error reading file");
@@ -25,7 +26,7 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
 
     if (fclose(fptr) != 0){
         perror("Error closing file");
-        return -1;
+        return UTIL_FAILURE;
     }
     
     return 0;
@@ -33,4 +34,25 @@ int util_readFile(const char* filePath, int maxLineLength, callback_ptr cb){
 
 void util_printBuffer(const char* string){
     fprintf(stdout, "%s\n", string);
+}
+
+int util_isNum(char t){
+    if ((int)t >= 48 && (int)t <= 57){
+        return UTIL_TRUE;
+    }
+    return UTIL_FALSE;
+}
+
+int util_isAlpha(char t){
+    if ((int)t >= 97 && (int)t <= 122){
+        return UTIL_TRUE;
+    }
+    else if ((int)t >= 65 && (int)t <= 90){
+        return UTIL_TRUE;
+    }
+    return UTIL_FALSE;
+}
+
+int util_isAlphaNum(char t){
+    return util_isNum(t) || util_isAlpha(t);
 }
