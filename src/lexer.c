@@ -12,19 +12,28 @@ void lexer_lex(int current, TokenList* tokens, const char* line){
     if (current <= (int)strlen(line)){
         char t = line[current];
         if (t == '('){
-            lexer_addToken(tokens, "(", L_OPAREN);
+            lexer_addToken(tokens, "(", OPEN_PAREN);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == ')'){
-            lexer_addToken(tokens, ")", L_CPAREN);
+            lexer_addToken(tokens, ")", CLOSE_PAREN);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            lexer_addToken(tokens, "\'", L_SQUOTE);
+            lexer_addToken(tokens, "\'", SINGLE_QUOTE);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\"'){
-            lexer_addToken(tokens, "\"", L_DQUOTE);
+            lexer_addToken(tokens, "\"", DOUBLE_QUOTE);
+            lexer_lex(current + 1, tokens, line);
+        }
+        else if (t == '.'){
+            lexer_addToken(tokens, ".", DOT);
+            lexer_lex(current + 1, tokens, line);
+        }
+        else if (t == '-'){
+            // Should I track this is as a dash or as a minus?
+            lexer_addToken(tokens, "-", MINUS);
             lexer_lex(current + 1, tokens, line);
         }
         else if (util_isNum(t)){
@@ -61,7 +70,7 @@ void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line
             lexer_lexNum(current + 1, tokens, lexeme, line);
         }
         else {
-            lexer_addToken(tokens, lexeme, L_NUMBER);
+            lexer_addToken(tokens, lexeme, NUMBER);
             lexer_lex(current, tokens, line);
         }
     }
@@ -76,7 +85,7 @@ void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* li
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            lexer_addToken(tokens, lexeme, L_IDENTIFIER);
+            lexer_addToken(tokens, lexeme, IDENTIFIER);
             lexer_lex(current, tokens, line);
         }
     }

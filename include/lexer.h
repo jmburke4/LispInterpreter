@@ -3,13 +3,27 @@
 
 #define MAX_WORD_LENGTH 12
 
+// Copied enums from https://craftinginterpreters.com/scanning.html#:~:text=lox%3B%0A%0Aenum-,TokenType,-%7B%0A%20%20//%20Single%2Dcharacter
 typedef enum {
-    L_IDENTIFIER,
-    L_OPAREN,
-    L_CPAREN,
-    L_NUMBER,
-    L_SQUOTE,
-    L_DQUOTE,
+  // Single-character tokens.
+  OPEN_PAREN, CLOSE_PAREN, OPEN_BRACE, CLOSE_BRACE,
+  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+  SINGLE_QUOTE, DOUBLE_QUOTE,
+
+  // One or two character tokens.
+  BANG, BANG_EQUAL,
+  EQUAL, EQUAL_EQUAL,
+  GREATER, GREATER_EQUAL,
+  LESS, LESS_EQUAL,
+
+  // Literals.
+  IDENTIFIER, STRING, NUMBER,
+
+  // Keywords.
+  AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
+  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+
+  LEXER_EOF
 } TokenType;
 
 typedef struct {

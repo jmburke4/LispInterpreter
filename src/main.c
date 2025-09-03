@@ -13,9 +13,8 @@ int main(int argc, char *argv[]) {
         result = util_readFile((char*)argv[1], 256, tokens, lexer_scanTokens);
     }
     else {
-        // This is the Windows absolute path
-        // can also use relative path "./bin/tests/c2.txt"
-        result = util_readFile("R:\\LispInterpreter\\tests\\c2.txt", 256, tokens, lexer_scanTokens);
+        // Windows absolute path: "R:\\LispInterpreter\\tests\\c2.txt"
+        result = util_readFile("./bin/tests/c2.txt", 256, tokens, lexer_scanTokens);
     }
 
     Token* head = (Token*)tokens->first;

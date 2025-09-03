@@ -50,9 +50,6 @@ int util_isAlpha(char t){
     else if ((int)t >= 65 && (int)t <= 90){
         return UTIL_TRUE;
     }
-    else if (t == '-' || t == '.'){ // For now, we'll allow a dash and a period as a regular letter
-        return UTIL_TRUE;
-    }
     return UTIL_FALSE;
 }
 
