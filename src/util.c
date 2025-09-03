@@ -8,6 +8,7 @@ int util_readFile(const char* filePath, int maxLineLength, TokenList* list, call
     fptr = fopen(filePath, "r");
 
     if (fptr == NULL) {
+        fprintf(stderr, "Error for filepath: \'%s\'\n", filePath);
         perror("Error opening file");
         return UTIL_FAILURE;
     }
@@ -17,7 +18,7 @@ int util_readFile(const char* filePath, int maxLineLength, TokenList* list, call
     }
 
     if (feof(fptr)){
-        fprintf(stdout, "EOF\n");
+        //fprintf(stdout, "EOF\n");
     }
     else {
         perror("Error reading file");
