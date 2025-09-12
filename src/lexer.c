@@ -9,7 +9,7 @@ void lexer_scanTokens(const char* line, TokenList* list){
 }
 
 void lexer_lex(int current, TokenList* tokens, const char* line){
-    if (current <= (int)strlen(line)){
+    if (current < (int)strlen(line)){
         char t = line[current];
         if (t == '('){
             lexer_addToken(tokens, "(", OPEN_PAREN);
@@ -100,10 +100,8 @@ void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const ch
     if (current < (int)strlen(line)){
         char t = line[current];
         if (t == ')'){
-            //char* t_str = &t;
-            //strncat(lexeme, t_str, 1);
             lexer_addToken(tokens, lexeme, TATOM);
-            lexer_lex(current, tokens, line);
+            lexer_lex(current + 1, tokens, line);
         }
         else if (t == '('){
             lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
@@ -111,9 +109,7 @@ void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const ch
         else if (t == ' '){
             // Distribute the quote across parentheses ex. '(a b) -> 'a 'b
             lexer_addToken(tokens, lexeme, TATOM);
-            char t_str[2];
-            t_str[0] = '\'';
-            t_str[1] = '\0';
+            char t_str[] = "\'\0";
             lexer_lexQuotedParen(current + 1, tokens, t_str, line);
         }
         else {
@@ -128,6 +124,7 @@ void lexer_printTokens(TokenList* tokens){
     Token* head = (Token*)tokens->first;
     while (head != NULL){
         fprintf(stdout, "TOKEN: %s\n", head->val);
+        fflush(stdout);
         head = (Token*)head->next;
     }
     fprintf(stdout, "\nLexed %d tokens.\n\n", tokens->size);
@@ -163,8 +160,13 @@ int lexer_addToken(TokenList* list, char* val, TokenType type){
         list->first = node;
     }
     else {
-        list->last->next = (struct Token*)node;
-        node->prev = (struct Token*)list->last;
+        if (list->last->next == NULL){
+            list->last->next = (struct Token*)node;
+            node->prev = (struct Token*)list->last;
+        }
+        else {
+            printf("ERROR: Next pointer of last node in list is not null\n");
+        }
     }
     list->last = node;
     list->size++;

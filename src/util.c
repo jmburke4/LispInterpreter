@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int util_readFile(const char* filePath, int maxLineLength, TokenList* list, callback_ptr cb){
-    FILE* fptr;
+    FILE* fptr = NULL;
     char buffer[maxLineLength];
     
     fptr = fopen(filePath, "r");

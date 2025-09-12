@@ -5,7 +5,7 @@
 #include "parser.h"
 #include "../include/parser.h"  // This is here for intellisense
 
-Token* currentToken;
+Token* currentToken = NULL;
 
 void parser_advance() { if (currentToken != NULL) currentToken = (Token*)currentToken->next; }
 
@@ -67,7 +67,7 @@ void parser_print(SExpression* expr) {
         }
     } 
     else if (expr->type == (SExprType)CONS) {
-        printf("("); // This is printing twice
+        printf("(");
         while (expr != NULL && expr->type == CONS) {
             parser_print(expr->cons.car);
             expr = expr->cons.cdr;
@@ -77,6 +77,6 @@ void parser_print(SExpression* expr) {
             printf(". ");
             parser_print(expr);
         }
-        printf(")"); // This is printing twice
+        printf(")");
     }
 }  
