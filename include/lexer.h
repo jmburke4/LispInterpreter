@@ -5,6 +5,8 @@
 
 // Copied enums from https://craftinginterpreters.com/scanning.html#:~:text=lox%3B%0A%0Aenum-,TokenType,-%7B%0A%20%20//%20Single%2Dcharacter
 typedef enum {
+  TATOM,
+  
   // Single-character tokens.
   OPEN_PAREN, CLOSE_PAREN, OPEN_BRACE, CLOSE_BRACE,
   COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
@@ -27,16 +29,16 @@ typedef enum {
 } TokenType;
 
 typedef struct {
-    char* val;
-    TokenType type;
-    struct Token* prev;
-    struct Token* next;
+  char* val;
+  TokenType type;
+  struct Token* prev;
+  struct Token* next;
 } Token;
 
 typedef struct {
-    int size;
-    Token* first;
-    Token* last;
+  int size;
+  Token* first;
+  Token* last;
 } TokenList;
 
 /// @brief Lexes tokens from a line of code
@@ -63,6 +65,17 @@ void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line
 /// @param lexeme The multi-char string being scanned
 /// @param line The line to scan
 void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* line);
+
+/// @brief The recursive function to distribute a quote across atoms in parentheses
+/// @param current The current index within the line being scanned
+/// @param tokens The list of tokens to append to
+/// @param lexeme The multi-char string starting with a quote to be scanned
+/// @param line The line to scan
+void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const char* line);
+
+/// @brief Prints each token in a TokenList
+/// @param tokens A TokenList struct with a pointer to the first token
+void lexer_printTokens(TokenList* tokens);
 
 /// @brief Allocate memory for a new list of tokens
 /// @return A pointer to a TokenList struct

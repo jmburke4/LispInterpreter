@@ -20,20 +20,25 @@ void lexer_lex(int current, TokenList* tokens, const char* line){
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            lexer_addToken(tokens, "\'", SINGLE_QUOTE);
-            lexer_lex(current + 1, tokens, line);
+            // Errors will occur if single quote is last character in the file, or if
+            // followed by a space
+            char t_str[MAX_WORD_LENGTH];
+            t_str[0] = t;
+            t_str[1] = '\0';
+            if (line[current + 1] == '(') lexer_lexQuotedParen(current + 1, tokens, t_str, line);
+            else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == '\"'){
-            lexer_addToken(tokens, "\"", DOUBLE_QUOTE);
+            lexer_addToken(tokens, "\"", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '.'){
-            lexer_addToken(tokens, ".", DOT);
+            lexer_addToken(tokens, ".", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '-'){
             // Should I track this is as a dash or as a minus?
-            lexer_addToken(tokens, "-", MINUS);
+            lexer_addToken(tokens, "-", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (util_isNum(t)){
@@ -70,7 +75,7 @@ void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line
             lexer_lexNum(current + 1, tokens, lexeme, line);
         }
         else {
-            lexer_addToken(tokens, lexeme, NUMBER);
+            lexer_addToken(tokens, lexeme, TATOM);
             lexer_lex(current, tokens, line);
         }
     }
@@ -79,16 +84,53 @@ void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line
 void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
-        if (util_isAlpha(t)){
+        if (util_isAlphaNum(t)){
             char* t_str = &t;
             strncat(lexeme, t_str, 1);
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            lexer_addToken(tokens, lexeme, IDENTIFIER);
+            lexer_addToken(tokens, lexeme, TATOM);
             lexer_lex(current, tokens, line);
         }
     }
+}
+
+void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const char* line){
+    if (current < (int)strlen(line)){
+        char t = line[current];
+        if (t == ')'){
+            //char* t_str = &t;
+            //strncat(lexeme, t_str, 1);
+            lexer_addToken(tokens, lexeme, TATOM);
+            lexer_lex(current, tokens, line);
+        }
+        else if (t == '('){
+            lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
+        }
+        else if (t == ' '){
+            // Distribute the quote across parentheses ex. '(a b) -> 'a 'b
+            lexer_addToken(tokens, lexeme, TATOM);
+            char t_str[2];
+            t_str[0] = '\'';
+            t_str[1] = '\0';
+            lexer_lexQuotedParen(current + 1, tokens, t_str, line);
+        }
+        else {
+            char* t_str = &t;
+            strncat(lexeme, t_str, 1);
+            lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
+        }
+    }
+}
+
+void lexer_printTokens(TokenList* tokens){
+    Token* head = (Token*)tokens->first;
+    while (head != NULL){
+        fprintf(stdout, "TOKEN: %s\n", head->val);
+        head = (Token*)head->next;
+    }
+    fprintf(stdout, "\nLexed %d tokens.\n\n", tokens->size);
 }
 
 TokenList* lexer_initTokenList(){
