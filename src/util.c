@@ -14,6 +14,7 @@ int util_readFile(const char* filePath, int maxLineLength, TokenList* list, call
     }
 
     while (fgets(buffer, maxLineLength, fptr) != NULL){
+        // util_printBuffer(buffer);
         cb(buffer, list);
     }
 
@@ -37,7 +38,8 @@ void util_printBuffer(const char* string){
 }
 
 int util_isNum(char t){
-    if ((int)t >= 48 && (int)t <= 57){
+    if (((int)t >= 48 && (int)t <= 57) || t == '.'){
+        // Include period for floating point numbers
         return UTIL_TRUE;
     }
     return UTIL_FALSE;

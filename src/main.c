@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
     }
     else {
         // Windows absolute path: "R:\\LispInterpreter\\tests\\c2.txt"
-        result = util_readFile("./bin/tests/s1.txt", 256, tokens, lexer_scanTokens);
+        result = util_readFile("./bin/tests/s1a.txt", 256, tokens, lexer_scanTokens);
     }
 
     lexer_printTokens(tokens);

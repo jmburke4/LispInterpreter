@@ -1,9 +1,3 @@
-need doubly linked list
-    - push_back
-    - remove
-    - search
-
-need bst to hold and lookup list of reserved words
 
 [scanner/lexer](https://craftinginterpreters.com/a-map-of-the-territory.html#scanning)
     parses input into tokens such as " / ( {
@@ -20,4 +14,8 @@ need bst to hold and lookup list of reserved words
 * The parser will be used by the interpreter to evaluate the s-expression.
 */
 
-
+Language name ideas:
+- ban (.ban)
+- vironhazel (.vh)
+- kwyjibo (.kbo)
+  
