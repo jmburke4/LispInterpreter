@@ -27,10 +27,20 @@ Token* parser_peek();
 /// @param head The head of the list of tokens to use
 void parser_setList(Token* head);
 
+/// @brief Parses a nested list of S-Expressions
+/// @return An S-Expression
 SExpression* parser_parseList();
+
+/// @brief Parses an S-Expression
+/// @return An S-Expression
 SExpression* parser_parseExpression();
 
+/// @brief Prints an S-Expression
+/// @param expr The S-Expression to print
 void parser_print(SExpression* expr);
-void parser_printQuote(SExpression* atom);
+
+/// @brief Recursively frees the atoms in an S-Expression
+/// @param expr The S-Expression to free
+void parser_clearExpression(SExpression* expr);
 
 #endif

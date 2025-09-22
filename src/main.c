@@ -20,7 +20,11 @@ int main(int argc, char* argv[]) {
 
     parser_setList(tokens->first);
     SExpression* exp = parser_parseExpression();
+    lexer_clearTokenList(tokens);
     parser_print(exp);
+    parser_clearExpression(exp);
 
+    // Flush output stream for debugging
+    fflush(stdout);
     return result;
 }

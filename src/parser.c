@@ -72,3 +72,13 @@ void parser_print(SExpression* expr) {
         printf(")");
     }
 }  
+
+void parser_clearExpression(SExpression* expr){
+    if (expr != NULL){
+        if (expr->type == (SExprType)CONS){
+            parser_clearExpression(expr->cons.car);
+            parser_clearExpression(expr->cons.cdr);
+        }
+        free(expr);
+    }
+}

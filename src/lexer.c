@@ -173,3 +173,14 @@ int lexer_addToken(TokenList* list, char* val, TokenType type){
 
     return UTIL_SUCCESS;
 }
+
+void lexer_clearTokenList(TokenList *list){
+    Token* iterator = list->first;
+    Token* tmp = NULL;
+    while (iterator != NULL){
+        tmp = iterator;
+        iterator = (Token*)iterator->next;
+        free(tmp);
+        list->size--;
+    }
+}

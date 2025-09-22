@@ -94,4 +94,8 @@ Token* lexer_initToken(char* val, TokenType type);
 /// @return UTIL_SUCCESS or UTIL_FAILURE
 int lexer_addToken(TokenList* list, char* val, TokenType type);
 
+/// @brief Frees the tokens in a TokenList and resets the token counter
+/// @param list The TokenList to clear
+void lexer_clearTokenList(TokenList *list);
+
 #endif
