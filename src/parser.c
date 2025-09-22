@@ -36,7 +36,7 @@ SExpression* parser_parseExpression() {
         SExpression* atom = malloc(sizeof(SExpression));
         atom->type = (SExprType)ATOM;
         atom->atom = malloc(sizeof(char*) * strlen(currentToken->val));
-        strncpy(atom->atom, currentToken->val, strlen(currentToken->val));
+        strncpy(atom->atom, currentToken->val, strlen(currentToken->val) + 1);
         parser_advance();
         return atom;
     }
@@ -56,15 +56,7 @@ void parser_print(SExpression* expr) {
     }
 
     if (expr->type == (SExprType)ATOM) {
-        if (strcmp(expr->atom, "cons") == 0){
-            return;
-        }
-        else if (expr->atom[0] == '\''){
-            fprintf(stdout, "%s", expr->atom + 1);
-        }
-        else {
-            fprintf(stdout, "%s", expr->atom);
-        }
+        fprintf(stdout, "%s", expr->atom);
     } 
     else if (expr->type == (SExprType)CONS) {
         printf("(");

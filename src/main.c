@@ -18,8 +18,6 @@ int main(int argc, char* argv[]) {
         result = util_readFile("./bin/tests/s1a.txt", 256, tokens, lexer_scanTokens);
     }
 
-    lexer_printTokens(tokens);
-
     parser_setList(tokens->first);
     SExpression* exp = parser_parseExpression();
     parser_print(exp);

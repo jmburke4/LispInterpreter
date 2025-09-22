@@ -19,3 +19,24 @@ Language name ideas:
 - vironhazel (.vh)
 - kwyjibo (.kbo)
   
+```
+// (cons 'a '(b c)) : (  ( cons ('a '(b c)) )  ) -> car returns cons
+//                                               -> cdr returns ('a '(b c))
+
+// ('a '(b c))                                   -> car returns 'a
+//                                               -> cdr returns '(b c)
+
+// '(b c) : ('b 'c)                              -> car returns 'b
+//                                               -> cdr returns 'c
+
+// ------------------------------------------------------------------------------
+
+// (cons '(a b) 'c) : (  ( cons ('(a b) 'c) )  ) -> car returns cons
+//                                               -> cdr returns ('(a b) 'c)
+
+// ('(a b) 'c)                                   -> car returns '(a b)
+//                                               -> cdr returns 'c
+
+// '(a b) : ('a 'b)                              -> car returns 'a
+//                                               -> cdr returns 'b
+```

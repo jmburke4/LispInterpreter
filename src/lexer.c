@@ -12,11 +12,11 @@ void lexer_lex(int current, TokenList* tokens, const char* line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (t == '('){
-            lexer_addToken(tokens, "(", OPEN_PAREN);
+            lexer_addToken(tokens, "(\0", OPEN_PAREN);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == ')'){
-            lexer_addToken(tokens, ")", CLOSE_PAREN);
+            lexer_addToken(tokens, ")\0", CLOSE_PAREN);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
@@ -29,16 +29,16 @@ void lexer_lex(int current, TokenList* tokens, const char* line){
             else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == '\"'){
-            lexer_addToken(tokens, "\"", TATOM);
+            lexer_addToken(tokens, "\"\0", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '.'){
-            lexer_addToken(tokens, ".", TATOM);
+            lexer_addToken(tokens, ".\0", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '-'){
             // Should I track this is as a dash or as a minus?
-            lexer_addToken(tokens, "-", TATOM);
+            lexer_addToken(tokens, "-\0", TATOM);
             lexer_lex(current + 1, tokens, line);
         }
         else if (util_isNum(t)){
@@ -144,7 +144,7 @@ Token* lexer_initToken(char* val, TokenType type){
     Token* node = (Token*)malloc(sizeof(Token));
     
     node->val = malloc(sizeof(char*) * strlen(val));
-    strncpy(node->val, val, strlen(val));
+    strncpy(node->val, val, strlen(val) + 1);
 
     node->type = type;
     node->prev = NULL;
