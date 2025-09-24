@@ -1,7 +1,7 @@
 #include "util.h"
 #include <stdio.h>
 
-void util_printBuffer(const char* string){
+void util_printBuffer(const char *string){
     fprintf(stdout, "%s\n", string);
 }
 

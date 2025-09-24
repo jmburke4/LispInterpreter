@@ -4,11 +4,11 @@
 #include "util.h"
 #include "lexer.h"
 
-void lexer_scanTokens(const char* line, TokenList* list){
+void lexer_scanTokens(const char *line, TokenList *list){
     lexer_lex(0, list, line);
 }
 
-void lexer_lex(int current, TokenList* tokens, const char* line){
+void lexer_lex(int current, TokenList *tokens, const char *line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (t == '('){
@@ -66,11 +66,11 @@ void lexer_lex(int current, TokenList* tokens, const char* line){
     }
 }
 
-void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line){
+void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isNum(t)){
-            char* t_str = &t;
+            char *t_str = &t;
             strncat(lexeme, t_str, 1);
             lexer_lexNum(current + 1, tokens, lexeme, line);
         }
@@ -81,11 +81,11 @@ void lexer_lexNum(int current, TokenList* tokens, char* lexeme, const char* line
     }
 }
 
-void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* line){
+void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isAlphaNum(t)){
-            char* t_str = &t;
+            char *t_str = &t;
             strncat(lexeme, t_str, 1);
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
@@ -96,7 +96,7 @@ void lexer_lexAlpha(int current, TokenList* tokens, char* lexeme, const char* li
     }
 }
 
-void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const char* line){
+void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const char *line){
     if (current < (int)strlen(line)){
         char t = line[current];
         if (t == ')'){
@@ -113,15 +113,15 @@ void lexer_lexQuotedParen(int current, TokenList* tokens, char* lexeme, const ch
             lexer_lexQuotedParen(current + 1, tokens, t_str, line);
         }
         else {
-            char* t_str = &t;
+            char *t_str = &t;
             strncat(lexeme, t_str, 1);
             lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
         }
     }
 }
 
-void lexer_printTokens(TokenList* tokens){
-    Token* head = (Token*)tokens->first;
+void lexer_printTokens(TokenList *tokens){
+    Token *head = (Token*)tokens->first;
     while (head != NULL){
         fprintf(stdout, "TOKEN: %s\n", head->val);
         fflush(stdout);
@@ -130,8 +130,8 @@ void lexer_printTokens(TokenList* tokens){
     fprintf(stdout, "\nLexed %d tokens.\n\n", tokens->size);
 }
 
-TokenList* lexer_initTokenList(){
-    TokenList* list = (TokenList*)malloc(sizeof(TokenList));
+TokenList *lexer_initTokenList(){
+    TokenList *list = (TokenList*)malloc(sizeof(TokenList));
     
     list->size = 0;
     list->first = NULL;
@@ -140,8 +140,8 @@ TokenList* lexer_initTokenList(){
     return list;
 }
 
-Token* lexer_initToken(char* val, TokenType type){
-    Token* node = (Token*)malloc(sizeof(Token));
+Token *lexer_initToken(char *val, TokenType type){
+    Token *node = (Token*)malloc(sizeof(Token));
     
     node->val = malloc(sizeof(char*) * strlen(val));
     strncpy(node->val, val, strlen(val) + 1);
@@ -153,8 +153,8 @@ Token* lexer_initToken(char* val, TokenType type){
     return node;
 }
 
-int lexer_addToken(TokenList* list, char* val, TokenType type){
-    Token* node = lexer_initToken(val, type);
+int lexer_addToken(TokenList *list, char *val, TokenType type){
+    Token *node = lexer_initToken(val, type);
 
     if (list->size == 0){
         list->first = node;
@@ -175,8 +175,8 @@ int lexer_addToken(TokenList* list, char* val, TokenType type){
 }
 
 void lexer_clearTokenList(TokenList *list){
-    Token* iterator = list->first;
-    Token* tmp = NULL;
+    Token *iterator = list->first;
+    Token *tmp = NULL;
     while (iterator != NULL){
         tmp = iterator;
         iterator = (Token*)iterator->next;

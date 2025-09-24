@@ -7,13 +7,13 @@
 
 #define LINE_BUFFER_SIZE 256
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     int result = 0;
-    TokenList* tokens = lexer_initTokenList();
+    TokenList *tokens = lexer_initTokenList();
     char buffer[LINE_BUFFER_SIZE];
 
     if (argc == 2){
-        FILE* fptr = fopen((char*)argv[1], "r");
+        FILE *fptr = fopen((char*)argv[1], "r");
         if (fptr == NULL) {
             fprintf(stderr, "Error for filepath: \'%s\'\n", (char*)argv[1]);
             return UTIL_FAILURE;
@@ -27,9 +27,11 @@ int main(int argc, char* argv[]) {
                 buffer[len-1] = '\0';
             }
 
+            printf("\n>%s\n", buffer);
+
             lexer_scanTokens(buffer, tokens);
             parser_setList(tokens->first);
-            SExpression* exp = parser_parseExpression();
+            SExpression *exp = parser_parseExpression();
             lexer_clearTokenList(tokens);
             parser_print(exp);
             parser_clearExpression(exp);
@@ -58,15 +60,17 @@ int main(int argc, char* argv[]) {
 
                 lexer_scanTokens(buffer, tokens);
                 parser_setList(tokens->first);
-                SExpression* exp = parser_parseExpression();
+                SExpression *exp = parser_parseExpression();
                 lexer_clearTokenList(tokens);
                 parser_print(exp);
                 parser_clearExpression(exp);
-            } else {
+            } 
+            else {
                 fprintf(stderr, "Error reading input.\n");
             }
 
             // Flush output stream for debugging
+            printf("\n");
             fflush(stdout);
         }
     }

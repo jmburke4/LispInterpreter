@@ -5,22 +5,22 @@
 #include "parser.h"
 #include "../include/parser.h"  // This is here for intellisense
 
-Token* currentToken = NULL;
+Token *currentToken = NULL;
 
 void parser_advance() { if (currentToken != NULL) currentToken = (Token*)currentToken->next; }
 
-Token* parser_peek() { return (Token*)currentToken->next; }
+Token *parser_peek() { return (Token*)currentToken->next; }
 
-void parser_setList(Token* head){ currentToken = head; }
+void parser_setList(Token *head){ currentToken = head; }
 
-SExpression* parser_parseList() {
+SExpression *parser_parseList() {
     if (currentToken == NULL || currentToken->type == (TokenType)CLOSE_PAREN){
         parser_advance();
         return NULL; // nil
     }
     
-    SExpression* car = parser_parseExpression();
-    SExpression* cdr = parser_parseList();
+    SExpression *car = parser_parseExpression();
+    SExpression *cdr = parser_parseList();
 
     SExpression *cell = malloc(sizeof(SExpression));
     cell->type = (SExprType)CONS;
@@ -29,11 +29,11 @@ SExpression* parser_parseList() {
     return cell;
 }
 
-SExpression* parser_parseExpression() {
+SExpression *parser_parseExpression() {
     if (currentToken == NULL) return NULL;
 
     if (currentToken->type == (TokenType)TATOM){
-        SExpression* atom = malloc(sizeof(SExpression));
+        SExpression *atom = malloc(sizeof(SExpression));
         atom->type = (SExprType)ATOM;
         atom->atom = malloc(sizeof(char*) * strlen(currentToken->val));
         strncpy(atom->atom, currentToken->val, strlen(currentToken->val) + 1);
@@ -49,7 +49,7 @@ SExpression* parser_parseExpression() {
     return NULL; // nil
 }
 
-void parser_print(SExpression* expr) {
+void parser_print(SExpression *expr) {
     if (expr == NULL) {
         printf("()");
         return;
@@ -73,7 +73,7 @@ void parser_print(SExpression* expr) {
     }
 }  
 
-void parser_clearExpression(SExpression* expr){
+void parser_clearExpression(SExpression *expr){
     if (expr != NULL){
         if (expr->type == (SExprType)CONS){
             parser_clearExpression(expr->cons.car);

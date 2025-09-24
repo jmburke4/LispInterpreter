@@ -11,7 +11,7 @@
 
 /// @brief Prints a string to stdout
 /// @param string The string to print
-void util_printBuffer(const char* string);
+void util_printBuffer(const char *string);
 
 /// @brief Checks if a char is a num
 /// @param t The char to check
