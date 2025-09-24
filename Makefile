@@ -17,7 +17,7 @@ OBJS = $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%.o,$(SRCS))
 # Define the executable name
 TARGET = $(BIN_DIR)/a
 
-.PHONY: all clean
+.PHONY: all clean cpt
 
 # Default target: build the executable
 all: $(TARGET)
@@ -39,3 +39,8 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.c | $(BIN_DIR)
 # Clean target: remove bin folder and all contents
 clean:
 	rm -rf $(BIN_DIR)
+
+# Copy Tests: recopy tests directory into the bin folder
+cpt:
+	rm -rf $(BIN_DIR)/$(TST_DIR)
+	cp -r $(TST_DIR) $(BIN_DIR)/$(TST_DIR)	

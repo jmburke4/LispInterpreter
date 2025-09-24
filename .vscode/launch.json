@@ -9,7 +9,7 @@
 			"preLaunchTask": "build",
 			"program": "${workspaceFolder}/bin/a.exe",
 			"request": "launch",
-			"args": ["R:\\LispInterpreter\\tests\\s1a.txt"],
+			"args": ["R:\\LispInterpreter\\tests\\sprint1.lisp"],
 			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",

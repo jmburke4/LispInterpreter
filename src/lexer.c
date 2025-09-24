@@ -127,7 +127,7 @@ void lexer_printTokens(TokenList *tokens){
         fflush(stdout);
         head = (Token*)head->next;
     }
-    fprintf(stdout, "\nLexed %d tokens.\n\n", tokens->size);
+    //fprintf(stdout, "Lexed %d tokens.\n", tokens->size);
 }
 
 TokenList *lexer_initTokenList(){

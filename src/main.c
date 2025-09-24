@@ -27,18 +27,21 @@ int main(int argc, char *argv[]) {
                 buffer[len-1] = '\0';
             }
 
-            printf("\n>%s\n", buffer);
-
             lexer_scanTokens(buffer, tokens);
-            parser_setList(tokens->first);
-            SExpression *exp = parser_parseExpression();
-            lexer_clearTokenList(tokens);
-            parser_print(exp);
-            parser_clearExpression(exp);
-
-            // Flush output stream for debugging
-            printf("\n");
-            fflush(stdout);
+            if (tokens->size > 0){
+                printf("\n>%s\n", buffer);
+                
+                lexer_printTokens(tokens);
+                parser_setList(tokens->first);
+                SExpression *exp = parser_parseExpression();
+                lexer_clearTokenList(tokens);
+                parser_print(exp);
+                parser_clearExpression(exp);
+                
+                // Flush output stream for debugging
+                printf("\n");
+                fflush(stdout);
+            }
         }
 
         if (!feof(fptr)) perror("Error reading file");
@@ -59,11 +62,13 @@ int main(int argc, char *argv[]) {
                 }
 
                 lexer_scanTokens(buffer, tokens);
-                parser_setList(tokens->first);
-                SExpression *exp = parser_parseExpression();
-                lexer_clearTokenList(tokens);
-                parser_print(exp);
-                parser_clearExpression(exp);
+                if (tokens->size > 0){
+                    parser_setList(tokens->first);
+                    SExpression *exp = parser_parseExpression();
+                    lexer_clearTokenList(tokens);
+                    parser_print(exp);
+                    parser_clearExpression(exp);
+                }
             } 
             else {
                 fprintf(stderr, "Error reading input.\n");
