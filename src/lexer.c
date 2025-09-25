@@ -4,9 +4,7 @@
 #include "util.h"
 #include "lexer.h"
 
-void lexer_scanTokens(const char *line, TokenList *list){
-    lexer_lex(0, list, line);
-}
+void lexer_scanTokens(const char *line, TokenList *list){ lexer_lex(0, list, line); }
 
 void lexer_lex(int current, TokenList *tokens, const char *line){
     if (current < (int)strlen(line)){
@@ -20,11 +18,7 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            // Errors will occur if single quote is last character in the file, or if
-            // followed by a space
-            char t_str[MAX_WORD_LENGTH];
-            t_str[0] = t;
-            t_str[1] = '\0';
+            char t_str[] = "\'\0";
             if (line[current + 1] == '(') lexer_lexQuotedParen(current + 1, tokens, t_str, line);
             else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
@@ -155,6 +149,10 @@ Token *lexer_initToken(char *val, TokenType type){
 
 int lexer_addToken(TokenList *list, char *val, TokenType type){
     Token *node = lexer_initToken(val, type);
+
+    // Should not add a single quote
+    // I'd rather do the error handling and not call this function with an invalid val in the first place
+    if (val[0] == '\'' && strlen(val) == 1) return UTIL_FAILURE;
 
     if (list->size == 0){
         list->first = node;
