@@ -3,42 +3,32 @@
 
 #define MAX_WORD_LENGTH 12
 
-// Copied enums from https://craftinginterpreters.com/scanning.html#:~:text=lox%3B%0A%0Aenum-,TokenType,-%7B%0A%20%20//%20Single%2Dcharacter
 typedef enum {
-  TATOM,
-  
-  // Single-character tokens.
-  OPEN_PAREN, CLOSE_PAREN, OPEN_BRACE, CLOSE_BRACE,
-  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
-  SINGLE_QUOTE, DOUBLE_QUOTE,
+    OPEN_PAREN, CLOSE_PAREN,
+    
+    MINUS, PLUS, SLASH, STAR,
+    
+    SINGLE_QUOTE, DOT, NIL,
+    
+    NOT, NOTEQ,
+    EQ, EQEQ,
+    GT, GTE,
+    LT, LTE,
 
-  // One or two character tokens.
-  BANG, BANG_EQUAL,
-  EQUAL, EQUAL_EQUAL,
-  GREATER, GREATER_EQUAL,
-  LESS, LESS_EQUAL,
-
-  // Literals.
-  IDENTIFIER, STRING, NUMBER,
-
-  // Keywords.
-  AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
-  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-
-  LEXER_EOF
+    STRING, INT, FLOAT
 } TokenType;
 
 typedef struct {
-  char *val;
-  TokenType type;
-  struct Token *prev;
-  struct Token *next;
+    char *val;
+    TokenType type;
+    struct Token *prev;
+    struct Token *next;
 } Token;
 
 typedef struct {
-  int size;
-  Token *first;
-  Token *last;
+    int size;
+    Token *first;
+    Token *last;
 } TokenList;
 
 /// @brief Lexes tokens from a line of code
@@ -57,7 +47,8 @@ void lexer_lex(int current, TokenList *tokens, const char *line);
 /// @param tokens The list of tokens
 /// @param lexeme The multi-char number being scanned
 /// @param line The line to scan
-void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line);
+/// @param hasDot Flag that is set to determine whether the lexeme is a float or an integer
+void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line, int hasDot);
 
 /// @brief The recursive function to process multi-char strings
 /// @param current The current index within the line being scanned

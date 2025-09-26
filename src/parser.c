@@ -32,18 +32,29 @@ SExpression *parser_parseList() {
 SExpression *parser_parseExpression() {
     if (currentToken == NULL) return NULL;
 
-    if (currentToken->type == (TokenType)TATOM){
-        SExpression *atom = malloc(sizeof(SExpression));
-        atom->type = (SExprType)ATOM;
-        atom->atom = malloc(sizeof(char*) * strlen(currentToken->val));
-        strncpy(atom->atom, currentToken->val, strlen(currentToken->val) + 1);
-        parser_advance();
-        return atom;
-    }
+    switch (currentToken->type){
+        case (TokenType)STRING:
+        case (TokenType)INT:
+        case (TokenType)FLOAT:
+            SExpression *atom = malloc(sizeof(SExpression));
+            atom->type = (SExprType)ATOM;
+            atom->atom = malloc(sizeof(char*) * strlen(currentToken->val));
+            strncpy(atom->atom, currentToken->val, strlen(currentToken->val) + 1);
+            parser_advance();
+            return atom;
 
-    if (currentToken->type == (TokenType)OPEN_PAREN){
-        parser_advance();
-        return parser_parseList();
+        case (TokenType)OPEN_PAREN:
+            parser_advance();
+            return parser_parseList();
+
+        case (TokenType)SINGLE_QUOTE:
+            parser_advance();
+            break;  
+
+        default:
+            fprintf(stderr, "Unhandled TokenType: %d\n", currentToken->type);
+            parser_advance();
+            return NULL;
     }
 
     return NULL; // nil

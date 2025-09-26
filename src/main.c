@@ -7,30 +7,7 @@
 
 #define LINE_BUFFER_SIZE 256
 
-void runLine(char _buffer[], TokenList* _tokens, int _repl){
-    // fgets includes the newline character if there's space.
-    // To remove it, you can find and replace it with a null terminator.
-    size_t len = strlen(_buffer);
-    if (len > 0 && _buffer[len-1] == '\n') {
-        _buffer[len-1] = '\0';
-    }
-    
-    lexer_scanTokens(_buffer, _tokens);
-    if (_tokens->size > 0){
-        if (_repl == 0) printf("\n>%s\n", _buffer);
-        
-        lexer_printTokens(_tokens);
-        parser_setList(_tokens->first);
-        SExpression *exp = parser_parseExpression();
-        lexer_clearTokenList(_tokens);
-        parser_print(exp);
-        parser_clearExpression(exp);
-        
-        // Flush output stream for debugging
-        printf("\n");
-        fflush(stdout);
-    }
-}
+void runLine(char[], TokenList*, int);
 
 int main(int argc, char *argv[]) {
     int result = 0;
@@ -67,4 +44,29 @@ int main(int argc, char *argv[]) {
     }
 
     return result;
+}
+
+void runLine(char _buffer[], TokenList* _tokens, int _repl){
+    // fgets includes the newline character if there's space.
+    // To remove it, you can find and replace it with a null terminator.
+    size_t len = strlen(_buffer);
+    if (len > 0 && _buffer[len-1] == '\n') {
+        _buffer[len-1] = '\0';
+    }
+    
+    lexer_scanTokens(_buffer, _tokens);
+    if (_tokens->size > 0){
+        if (_repl == 0) printf("\n>%s\n", _buffer);
+        
+        lexer_printTokens(_tokens);
+        parser_setList(_tokens->first);
+        SExpression *exp = parser_parseExpression();
+        lexer_clearTokenList(_tokens);
+        parser_print(exp);
+        parser_clearExpression(exp);
+        
+        // Flush output stream for debugging
+        printf("\n");
+        fflush(stdout);
+    }
 }
