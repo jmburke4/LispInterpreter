@@ -1,8 +1,4 @@
-(a b) ; -> (a b)
-(a b c) ; -> (a (b c))
-((a b) c) ; -> ((a b) c)
-(a (b c)) ; -> (a (b c))
-(a b c d) ; -> ((a b)(c d))
+; This file is for testing the quote method
 
 ('a b) ; -> ((quote a) b)
 (a 'b) ; -> (a (quote b))

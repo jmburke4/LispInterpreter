@@ -130,16 +130,16 @@ void lexer_printTokens(TokenList *tokens){
         fflush(stdout);
         head = (Token*)head->next;
     }
-    //fprintf(stdout, "Lexed %d tokens.\n", tokens->size);
+    fprintf(stdout, "Lexed %d tokens (%d OPEN_PAREN, %d CLOSE_PAREN).\n", tokens->size, tokens->oparen, tokens->cparen);
 }
 
 TokenList *lexer_initTokenList(){
     TokenList *list = (TokenList*)malloc(sizeof(TokenList));
-    
     list->size = 0;
+    list->oparen = 0;
+    list->cparen = 0;
     list->first = NULL;
     list->last = NULL;
-    
     return list;
 }
 
@@ -174,6 +174,9 @@ int lexer_addToken(TokenList *list, char *val, TokenType type){
     list->last = node;
     list->size++;
 
+    if (node->type == (TokenType)OPEN_PAREN) list->oparen++;
+    if (node->type == (TokenType)CLOSE_PAREN) list->cparen++;
+
     return UTIL_SUCCESS;
 }
 
@@ -181,9 +184,66 @@ void lexer_clearTokenList(TokenList *list){
     Token *iterator = list->first;
     Token *tmp = NULL;
     while (iterator != NULL){
+        if (iterator->type == (TokenType)OPEN_PAREN) list->oparen--;
+        if (iterator->type == (TokenType)CLOSE_PAREN) list->cparen--;
+        
         tmp = iterator;
         iterator = (Token*)iterator->next;
         free(tmp);
         list->size--;
+    }
+}
+
+void lexer_normalizeList(TokenList *list){
+    // This function will convert (a b c) -> (a (b c))
+    // If you have a function call with parameters, you must use explicit parentheses
+    //      ex. (quote a b) will be normalized to (quote (a b)) // which is WRONG
+    //          You must do ((quote a) b) -> ((quote a) b)
+
+    int nonParenTokens = list->size - list->oparen - list->cparen;
+    if (list->oparen != list->cparen) {
+        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE. Aborting...\n\n", list->oparen, list->cparen);
+        return;
+    }
+    else if ((nonParenTokens - 1) == list->oparen){
+        // fprintf(stdout, "List already normalized.\n");
+    }
+    else {
+        int missingPairs = (nonParenTokens - 1) - list->oparen;
+        // printf("Missing %d sets of parentheses.\n", missingPairs);
+        Token* iter = list->first;
+        int count = 0;
+
+        while (iter != NULL && missingPairs > 0){
+            if (iter->type != (TokenType)OPEN_PAREN && iter->type != (TokenType)CLOSE_PAREN){
+                Token* nxt = (Token*)iter->next;
+                if (nxt->type != (TokenType)CLOSE_PAREN) count++;
+                if (count == 2){
+                    // add parentheses
+                    Token* newO = lexer_initToken("(\0", (TokenType)OPEN_PAREN);
+                    Token* newC = lexer_initToken(")\0", (TokenType)CLOSE_PAREN);
+                    
+                    // Insert opening parentheses before current token
+                    Token* prev = (Token*)iter->prev;
+                    prev->next = (struct Token*)newO;
+                    newO->prev = iter->prev;
+                    iter->prev = (struct Token*)newO;
+                    newO->next = (struct Token*)iter;
+
+                    // Add closing parentheses to the end of the list
+                    newC->prev = (struct Token*)list->last;
+                    list->last->next = (struct Token*)newC;
+                    list->last = newC;
+
+                    list->size += 2;
+                    list->oparen++;
+                    list->cparen++;
+
+                    count--;
+                }
+            }
+            iter = (Token*)iter->next;
+            missingPairs = (nonParenTokens - 1) - list->oparen;
+        }
     }
 }

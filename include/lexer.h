@@ -27,6 +27,8 @@ typedef struct {
 
 typedef struct {
     int size;
+    int oparen;
+    int cparen;
     Token *first;
     Token *last;
 } TokenList;
@@ -88,5 +90,9 @@ int lexer_addToken(TokenList *list, char *val, TokenType type);
 /// @brief Frees the tokens in a TokenList and resets the token counter
 /// @param list The TokenList to clear
 void lexer_clearTokenList(TokenList *list);
+
+/// @brief Adds in explicit opening and close parentheses to the token list
+/// @param list A pointer to the TokenList to add parentheses to
+void lexer_normalizeList(TokenList *list);
 
 #endif

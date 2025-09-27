@@ -58,7 +58,7 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
     if (_tokens->size > 0){
         if (_repl == 0) printf("\n>%s\n", _buffer);
         
-        lexer_printTokens(_tokens);
+        lexer_normalizeList(_tokens);
         parser_setList(_tokens->first);
         SExpression *exp = parser_parseExpression();
         lexer_clearTokenList(_tokens);
