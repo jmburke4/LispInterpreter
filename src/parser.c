@@ -8,26 +8,31 @@
 
 Token *currentToken = NULL;
 
+SExpression *cons(SExpression* a, SExpression* b){
+    SExpression *new = malloc(sizeof(SExpression));
+    new->type = (SExprType)CONS;
+    new->cons.car = a;
+    new->cons.cdr = b;
+    return new;
+}
+
 void parser_advance() { if (currentToken != NULL) currentToken = (Token*)currentToken->next; }
 
-Token *parser_peek() { return (Token*)currentToken->next; }
-
-void parser_setList(Token *head){ currentToken = head; }
-
-SExpression *parser_parseList() {
-    if (currentToken == NULL || currentToken->type == (TokenType)CLOSE_PAREN){
-        parser_advance();
-        return NULL; // nil
+void parser_clearExpression(SExpression *expr){
+    if (expr != NULL){
+        if (expr->type == (SExprType)CONS){
+            parser_clearExpression(expr->cons.car);
+            parser_clearExpression(expr->cons.cdr);
+        }
+        free(expr);
     }
-    
-    SExpression *car = parser_parseExpression();
-    SExpression *cdr = parser_parseList();
+}
 
-    SExpression *cell = malloc(sizeof(SExpression));
-    cell->type = (SExprType)CONS;
-    cell->cons.car = car;
-    cell->cons.cdr = cdr;
-    return cell;
+SExpression *parser_initAtom(AtomType type){
+    SExpression *atom = malloc(sizeof(SExpression));
+    atom->type = (SExprType)ATOM;
+    atom->atom.type = type;
+    return atom;
 }
 
 SExpression *parser_parseExpression() {
@@ -78,6 +83,24 @@ SExpression *parser_parseExpression() {
     return NULL;
 }
 
+SExpression *parser_parseList() {
+    if (currentToken == NULL || currentToken->type == (TokenType)CLOSE_PAREN){
+        parser_advance();
+        return NULL; // nil
+    }
+    
+    SExpression *car = parser_parseExpression();
+    SExpression *cdr = parser_parseList();
+
+    SExpression *cell = malloc(sizeof(SExpression));
+    cell->type = (SExprType)CONS;
+    cell->cons.car = car;
+    cell->cons.cdr = cdr;
+    return cell;
+}
+
+Token *parser_peek() { return (Token*)currentToken->next; }
+
 void parser_print(SExpression *expr) {
     if (expr == NULL) {
         printf("()");
@@ -113,29 +136,6 @@ void parser_print(SExpression *expr) {
         }
         printf(")");
     }
-}  
-
-void parser_clearExpression(SExpression *expr){
-    if (expr != NULL){
-        if (expr->type == (SExprType)CONS){
-            parser_clearExpression(expr->cons.car);
-            parser_clearExpression(expr->cons.cdr);
-        }
-        free(expr);
-    }
 }
 
-SExpression *parser_initAtom(AtomType type){
-    SExpression *atom = malloc(sizeof(SExpression));
-    atom->type = (SExprType)ATOM;
-    atom->atom.type = type;
-    return atom;
-}
-
-SExpression *cons(SExpression* a, SExpression* b){
-    SExpression *new = malloc(sizeof(SExpression));
-    new->type = (SExprType)CONS;
-    new->cons.car = a;
-    new->cons.cdr = b;
-    return new;
-}
+void parser_setList(Token *head){ currentToken = head; }

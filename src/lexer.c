@@ -4,7 +4,66 @@
 #include "util.h"
 #include "lexer.h"
 
-void lexer_scanTokens(const char *line, TokenList *list){ lexer_lex(0, list, line); }
+int lexer_addToken(TokenList *list, char *val, TokenType type){
+    Token *node = lexer_initToken(val, type);
+
+    if (list->size == 0){
+        list->first = node;
+    }
+    else {
+        if (list->last->next == NULL){
+            list->last->next = (struct Token*)node;
+            node->prev = (struct Token*)list->last;
+        }
+        else {
+            printf("ERROR: Next pointer of last node in list is not null\n");
+        }
+    }
+    list->last = node;
+    list->size++;
+
+    if (node->type == (TokenType)OPEN_PAREN) list->oparen++;
+    if (node->type == (TokenType)CLOSE_PAREN) list->cparen++;
+
+    return UTIL_SUCCESS;
+}
+
+void lexer_clearTokenList(TokenList *list){
+    Token *iterator = list->first;
+    Token *tmp = NULL;
+    while (iterator != NULL){
+        if (iterator->type == (TokenType)OPEN_PAREN) list->oparen--;
+        if (iterator->type == (TokenType)CLOSE_PAREN) list->cparen--;
+        
+        tmp = iterator;
+        iterator = (Token*)iterator->next;
+        free(tmp);
+        list->size--;
+    }
+}
+
+Token *lexer_initToken(char *val, TokenType type){
+    Token *node = (Token*)malloc(sizeof(Token));
+    
+    node->val = malloc(sizeof(char*) * strlen(val));
+    strncpy(node->val, val, strlen(val) + 1);
+
+    node->type = type;
+    node->prev = NULL;
+    node->next = NULL;
+    
+    return node;
+}
+
+TokenList *lexer_initTokenList(){
+    TokenList *list = (TokenList*)malloc(sizeof(TokenList));
+    list->size = 0;
+    list->oparen = 0;
+    list->cparen = 0;
+    list->first = NULL;
+    list->last = NULL;
+    return list;
+}
 
 void lexer_lex(int current, TokenList *tokens, const char *line){
     if (current < (int)strlen(line)){
@@ -55,6 +114,22 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
     }
 }
 
+void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *line){
+    if (current < (int)strlen(line)){
+        char t = line[current];
+        if (util_isAlphaNum(t)){
+            char *t_str = &t;
+            strncat(lexeme, t_str, 1);
+            lexer_lexAlpha(current + 1, tokens, lexeme, line);
+        }
+        else {
+            if (lexeme[0] == '\'') lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
+            else lexer_addToken(tokens, lexeme, (TokenType)STRING);
+            lexer_lex(current, tokens, line);
+        }
+    }
+}
+
 void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line, int hasDot){
     if (current < (int)strlen(line)){
         char t = line[current];
@@ -71,22 +146,6 @@ void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line
         else {
             if (hasDot == 1) lexer_addToken(tokens, lexeme, (TokenType)FLOAT);
             else lexer_addToken(tokens, lexeme, (TokenType)INT);
-            lexer_lex(current, tokens, line);
-        }
-    }
-}
-
-void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *line){
-    if (current < (int)strlen(line)){
-        char t = line[current];
-        if (util_isAlphaNum(t)){
-            char *t_str = &t;
-            strncat(lexeme, t_str, 1);
-            lexer_lexAlpha(current + 1, tokens, lexeme, line);
-        }
-        else {
-            if (lexeme[0] == '\'') lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
-            else lexer_addToken(tokens, lexeme, (TokenType)STRING);
             lexer_lex(current, tokens, line);
         }
     }
@@ -121,77 +180,6 @@ void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const ch
             strncat(lexeme, t_str, 1);
             lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
         }
-    }
-}
-
-void lexer_printTokens(TokenList *tokens){
-    Token *head = (Token*)tokens->first;
-    while (head != NULL){
-        fprintf(stdout, "TYPE: %02d TOKEN: %s\n", head->type, head->val);
-        fflush(stdout);
-        head = (Token*)head->next;
-    }
-    fprintf(stdout, "Lexed %d tokens (%d OPEN_PAREN, %d CLOSE_PAREN).\n", tokens->size, tokens->oparen, tokens->cparen);
-}
-
-TokenList *lexer_initTokenList(){
-    TokenList *list = (TokenList*)malloc(sizeof(TokenList));
-    list->size = 0;
-    list->oparen = 0;
-    list->cparen = 0;
-    list->first = NULL;
-    list->last = NULL;
-    return list;
-}
-
-Token *lexer_initToken(char *val, TokenType type){
-    Token *node = (Token*)malloc(sizeof(Token));
-    
-    node->val = malloc(sizeof(char*) * strlen(val));
-    strncpy(node->val, val, strlen(val) + 1);
-
-    node->type = type;
-    node->prev = NULL;
-    node->next = NULL;
-    
-    return node;
-}
-
-int lexer_addToken(TokenList *list, char *val, TokenType type){
-    Token *node = lexer_initToken(val, type);
-
-    if (list->size == 0){
-        list->first = node;
-    }
-    else {
-        if (list->last->next == NULL){
-            list->last->next = (struct Token*)node;
-            node->prev = (struct Token*)list->last;
-        }
-        else {
-            printf("ERROR: Next pointer of last node in list is not null\n");
-        }
-    }
-    list->last = node;
-    list->size++;
-
-    if (node->type == (TokenType)OPEN_PAREN) list->oparen++;
-    if (node->type == (TokenType)CLOSE_PAREN) list->cparen++;
-
-    return UTIL_SUCCESS;
-}
-
-void lexer_clearTokenList(TokenList *list){
-    Token *iterator = list->first;
-    Token *tmp = NULL;
-    while (iterator != NULL){
-        if (iterator->type == (TokenType)OPEN_PAREN) list->oparen--;
-        if (iterator->type == (TokenType)CLOSE_PAREN) list->cparen--;
-        
-        tmp = iterator;
-        iterator = (Token*)iterator->next;
-        free(tmp);
-        list->size--;
     }
 }
 
@@ -248,3 +236,15 @@ void lexer_normalizeList(TokenList *list){
         }
     }
 }
+
+void lexer_printTokens(TokenList *tokens){
+    Token *head = (Token*)tokens->first;
+    while (head != NULL){
+        fprintf(stdout, "TYPE: %02d TOKEN: %s\n", head->type, head->val);
+        fflush(stdout);
+        head = (Token*)head->next;
+    }
+    fprintf(stdout, "Lexed %d tokens (%d OPEN_PAREN, %d CLOSE_PAREN).\n", tokens->size, tokens->oparen, tokens->cparen);
+}
+
+void lexer_scanTokens(const char *line, TokenList *list){ lexer_lex(0, list, line); }
