@@ -6,7 +6,7 @@ void util_printBuffer(const char *string){
 }
 
 int util_isNum(char t){
-    if (((int)t >= 48 && (int)t <= 57) || t == '.'){
+    if (((int)t >= 48 && (int)t <= 57)){
         // Include period for floating point numbers
         return UTIL_TRUE;
     }

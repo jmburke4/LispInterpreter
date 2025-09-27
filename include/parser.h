@@ -4,11 +4,21 @@
 #define PARSER_H
 
 typedef enum { ATOM, CONS } SExprType;
+typedef enum { A_ID, A_STR, A_INT, A_FLT } AtomType;
+
+typedef struct {
+    AtomType type;
+    union {
+        char *strVal;
+        int intVal;
+        float floatVal;
+    };
+} Atom;
 
 typedef struct SExpression {
     SExprType type;
     union {
-        char *atom; // for symbols, numbers, strings
+        Atom atom; // for symbols, numbers, strings
         struct {
             struct SExpression *car;
             struct SExpression *cdr;
@@ -42,5 +52,12 @@ void parser_print(SExpression *expr);
 /// @brief Recursively frees the atoms in an S-Expression
 /// @param expr The S-Expression to free
 void parser_clearExpression(SExpression *expr);
+
+/// @brief Initializes an Atom struct
+/// @param type The type of Atom to initialize
+/// @return The pointer to the new Atom struct
+SExpression *parser_initAtom(AtomType type);
+
+SExpression *cons(SExpression* a, SExpression* b);
 
 #endif

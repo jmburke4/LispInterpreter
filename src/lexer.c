@@ -18,11 +18,9 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\''){
-            // char t_str[] = "\'\0";
-            // if (line[current + 1] == '(') lexer_lexQuotedParen(current + 1, tokens, t_str, line);
-            // else lexer_lexAlpha(current + 1, tokens, t_str, line);
-            lexer_addToken(tokens, "\'\0", (TokenType)SINGLE_QUOTE);
-            lexer_lex(current + 1, tokens, line);
+            char t_str[] = "\'\0";
+            if (line[current + 1] == '(') lexer_lexQuotedParen(current + 1, tokens, t_str, line);
+            else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == '.'){
             lexer_addToken(tokens, ".\0", (TokenType)DOT);
@@ -87,7 +85,8 @@ void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *li
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            lexer_addToken(tokens, lexeme, (TokenType)STRING);
+            if (lexeme[0] == '\'') lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
+            else lexer_addToken(tokens, lexeme, (TokenType)STRING);
             lexer_lex(current, tokens, line);
         }
     }
@@ -103,10 +102,12 @@ void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const ch
             }
             else {
                 lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
+                lexer_addToken(tokens, ")\0", (TokenType)CLOSE_PAREN);
                 lexer_lex(current + 1, tokens, line);
             }
         }
         else if (t == '('){
+            lexer_addToken(tokens, "(\0", (TokenType)OPEN_PAREN);
             lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
         }
         else if (t == ' '){

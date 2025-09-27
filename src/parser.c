@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "lexer.h"
 #include "parser.h"
 #include "../include/parser.h"  // This is here for intellisense
@@ -34,30 +35,47 @@ SExpression *parser_parseExpression() {
 
     switch (currentToken->type){
         case (TokenType)STRING:
-        case (TokenType)INT:
-        case (TokenType)FLOAT:
-            SExpression *atom = malloc(sizeof(SExpression));
-            atom->type = (SExprType)ATOM;
-            atom->atom = malloc(sizeof(char*) * strlen(currentToken->val));
-            strncpy(atom->atom, currentToken->val, strlen(currentToken->val) + 1);
+            // Not sure where to determine whether its an identifier or a string
+            SExpression *astr = parser_initAtom(A_STR);
+            astr->atom.strVal = malloc(sizeof(char*) * strlen(currentToken->val) + 1);
+            strncpy(astr->atom.strVal, currentToken->val, strlen(currentToken->val) + 1);
             parser_advance();
-            return atom;
+            return astr;
+
+        case (TokenType)INT:
+            SExpression *aint = parser_initAtom(A_INT);
+            aint->atom.intVal = (int)atoi(currentToken->val);
+            parser_advance();
+            return aint;
+
+        case (TokenType)FLOAT:
+            SExpression *aflt = parser_initAtom(A_FLT);
+            aflt->atom.floatVal = (float)atof(currentToken->val);
+            parser_advance();
+            return aflt;
 
         case (TokenType)OPEN_PAREN:
             parser_advance();
             return parser_parseList();
 
         case (TokenType)SINGLE_QUOTE:
+            SExpression* quote = parser_initAtom(A_ID);
+            quote->atom.strVal = malloc(sizeof(char*) * strlen("quote") + 1);
+            strncpy(quote->atom.strVal, "quote\0", strlen("quote") + 1);
+            
+            SExpression* quotedVal = parser_initAtom(A_STR);
+            quotedVal->atom.strVal = malloc(sizeof(char*) * strlen(currentToken->val) + 1);
+            strncpy(quotedVal->atom.strVal, currentToken->val + 1, strlen(currentToken->val) + 1);
+
             parser_advance();
-            break;  
+            return cons(quote, quotedVal);
 
         default:
             fprintf(stderr, "Unhandled TokenType: %d\n", currentToken->type);
             parser_advance();
-            return NULL;
+            break;
     }
-
-    return NULL; // nil
+    return NULL;
 }
 
 void parser_print(SExpression *expr) {
@@ -67,7 +85,20 @@ void parser_print(SExpression *expr) {
     }
 
     if (expr->type == (SExprType)ATOM) {
-        fprintf(stdout, "%s", expr->atom);
+        switch (expr->atom.type){
+            case A_STR:
+            case A_ID:
+                printf("%s", expr->atom.strVal);
+                break;
+
+            case A_INT:
+                printf("%d", expr->atom.intVal);
+                break;
+
+            case A_FLT:
+                printf("%f", expr->atom.floatVal);
+                break;
+        }
     } 
     else if (expr->type == (SExprType)CONS) {
         printf("(");
@@ -92,4 +123,19 @@ void parser_clearExpression(SExpression *expr){
         }
         free(expr);
     }
+}
+
+SExpression *parser_initAtom(AtomType type){
+    SExpression *atom = malloc(sizeof(SExpression));
+    atom->type = (SExprType)ATOM;
+    atom->atom.type = type;
+    return atom;
+}
+
+SExpression *cons(SExpression* a, SExpression* b){
+    SExpression *new = malloc(sizeof(SExpression));
+    new->type = (SExprType)CONS;
+    new->cons.car = a;
+    new->cons.cdr = b;
+    return new;
 }

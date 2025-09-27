@@ -1,38 +1,34 @@
-(cons 'a '(b c)) ; Basic single quote distribution
-(cons 'a '(b c))
-(cons 'a '(b c))
-; Do comments work?
-; Yes, yes they do.
-(cons 'a '(b c ))
-(cons 'a '(b c ))
-(cons 'a '(b c ))
+; Testing parentheses normalizations
+(a b) ; -> (a b)
+(a b c) ; -> (a (b c))
+((a b) c) ; -> ((a b) c)
+(a (b c)) ; -> (a (b c))
 
-; Spaces should work too
+(a b c d) ; -> (a (b (c d)))
+(a b c d e) ; -> (a (b (c (d e))))
 
-(cons '(a b) 'c)
-(cons '(a b) 'c)
-(cons '(a b) 'c)
+((a b) c d) ; -> ((a b) (c d))
+(a (b c) d) ; -> (a ((b c) d))
+(a b (c d)) ; -> (a (b (c d)))
 
-(cons '(a b ) 'c)
-(cons '(a b ) 'c)
-(cons '(a b ) 'c)
+; Testing quote
+('a b) ; -> ((quote a) b)
+(a 'b) ; -> (a (quote b))
+('a 'b) ; -> ((quote a) (quote b))
 
-(cons 'a '())
-(cons 'a '())
-(cons 'a '())
+(a '(b c)) ; -> (a (quote (b c)))
+('(a b) c) ; -> ((quote (a b)) c)
 
-(cons 12 '(12 34))
-(cons 12 '(12 34))
-(cons 12 '(12 34))
+('a '(b c)) ; -> ((quote a) (quote (b c)))
+('(a b) 'c) ; -> ((quote (a b)) (quote c))
 
-(cons '(12 34) 56)
-(cons '(12 34) 56)
-(cons '(12 34) 56)
+; Testing number handling
+(12 34 56) ; -> (12 (34 56))
+(1.2 3.4 5.6) ; -> (1.2 (3.4 5.6))
+(1 2.3) ; -> (1 2.3)
+(1.2 3) ; -> (1.2 3)
 
-(cons 12.34 '(56.7 8.9))
-(cons 12.34 '(56.7 8.9))
-(cons 12.34 '(56.7 8.9))
-
-(cons 'hello '(there general) 'kenobi)
-(cons 'hello '(there general) 'kenobi)
-(cons 'hello '(there general) 'kenobi)
+; Testing string handling
+(ab cd ef) ; -> (ab (cd ef))
+(a bd cde fghi) ; -> (a (bd (cde fghi)))
+(hello there general kenobi) ; -> (hello (there (general kenobi)))
