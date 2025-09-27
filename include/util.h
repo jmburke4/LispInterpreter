@@ -1,5 +1,3 @@
-#include "lexer.h"
-
 #ifndef UTIL_C
 #define UTIL_C
 
@@ -9,24 +7,14 @@
 #define UTIL_TRUE 1
 #define UTIL_FALSE 0 
 
-/// @brief A type to represent a void function with a string pointer parameter 
-typedef void (*callback_ptr)(const char*, TokenList*); 
-
-/// @brief Reads contents of a file, and outputs each line to the passed callback function
-/// @param filePath The filepath of the file to read
-/// @param maxLineLength The maximum number of line characters to read
-/// @param cb The callback function that takes a string pointer  
-/// @return UTIL_SUCCESS or UTIL_FAILURE
-int util_readFile(const char* filePath, int maxLineLength, TokenList* list, callback_ptr cb);
-
-/// @brief Prints a string to stdout
-/// @param string The string to print
-void util_printBuffer(const char* string);
-
-/// @brief Checks if a char is a num
-/// @param t The char to check
-/// @return UTIL_TRUE or UTIL_FALSE
-int util_isNum(char t);
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+// Usage: printf(ANSI_COLOR_RED "This text is red." ANSI_COLOR_RESET "\n");
 
 /// @brief Checks if a char is a letter (case insensitive)
 /// @param t The char to check
@@ -37,5 +25,14 @@ int util_isAlpha(char t);
 /// @param t The char to check
 /// @return UTIL_TRUE or UTIL_FALSE
 int util_isAlphaNum(char t);
+
+/// @brief Checks if a char is a num
+/// @param t The char to check
+/// @return UTIL_TRUE or UTIL_FALSE
+int util_isNum(char t);
+
+/// @brief Prints a string to stdout
+/// @param string The string to print
+void util_printBuffer(const char *string);
 
 #endif
