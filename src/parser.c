@@ -28,10 +28,31 @@ void parser_clearExpression(SExpression *expr){
     }
 }
 
-SExpression *parser_initAtom(AtomType type){
+SExpression *parser_initAtom(AtomType type, char *val){
     SExpression *atom = malloc(sizeof(SExpression));
     atom->type = (SExprType)ATOM;
     atom->atom.type = type;
+
+    switch (type){
+        case (AtomType)A_STR:
+        case (AtomType)A_ID:
+            atom->atom.strVal = malloc(sizeof(char*) * strlen((char*)val) + 1);
+            strncpy(atom->atom.strVal, (char*)val, strlen((char*)val) + 1);
+            break;
+
+        case (AtomType)A_INT:
+            atom->atom.intVal = (int)atoi(val);
+            break;
+
+        case (AtomType)A_FLT:
+            atom->atom.floatVal = (float)atof(val);
+            break;
+
+        default:
+            fprintf(stderr, "Type: %d is an unhandled AtomType\n", type);
+            break;
+    }
+
     return atom;
 }
 
@@ -41,21 +62,17 @@ SExpression *parser_parseExpression() {
     switch (currentToken->type){
         case (TokenType)STRING:
             // Not sure where to determine whether its an identifier or a string
-            SExpression *astr = parser_initAtom(A_STR);
-            astr->atom.strVal = malloc(sizeof(char*) * strlen(currentToken->val) + 1);
-            strncpy(astr->atom.strVal, currentToken->val, strlen(currentToken->val) + 1);
+            SExpression *astr = parser_initAtom(A_STR, currentToken->val);
             parser_advance();
             return astr;
 
         case (TokenType)INT:
-            SExpression *aint = parser_initAtom(A_INT);
-            aint->atom.intVal = (int)atoi(currentToken->val);
+            SExpression *aint = parser_initAtom(A_INT, currentToken->val);
             parser_advance();
             return aint;
 
         case (TokenType)FLOAT:
-            SExpression *aflt = parser_initAtom(A_FLT);
-            aflt->atom.floatVal = (float)atof(currentToken->val);
+            SExpression *aflt = parser_initAtom(A_FLT, currentToken->val);
             parser_advance();
             return aflt;
 
@@ -64,14 +81,8 @@ SExpression *parser_parseExpression() {
             return parser_parseList();
 
         case (TokenType)SINGLE_QUOTE:
-            SExpression* quote = parser_initAtom(A_ID);
-            quote->atom.strVal = malloc(sizeof(char*) * strlen("quote") + 1);
-            strncpy(quote->atom.strVal, "quote\0", strlen("quote") + 1);
-            
-            SExpression* quotedVal = parser_initAtom(A_STR);
-            quotedVal->atom.strVal = malloc(sizeof(char*) * strlen(currentToken->val) + 1);
-            strncpy(quotedVal->atom.strVal, currentToken->val + 1, strlen(currentToken->val) + 1);
-
+            SExpression* quote = parser_initAtom(A_ID, "quote\0");
+            SExpression* quotedVal = parser_initAtom(A_STR, currentToken->val + 1);
             parser_advance();
             return cons(quote, quotedVal);
 
@@ -92,11 +103,7 @@ SExpression *parser_parseList() {
     SExpression *car = parser_parseExpression();
     SExpression *cdr = parser_parseList();
 
-    SExpression *cell = malloc(sizeof(SExpression));
-    cell->type = (SExprType)CONS;
-    cell->cons.car = car;
-    cell->cons.cdr = cdr;
-    return cell;
+    return cons(car, cdr);
 }
 
 Token *parser_peek() { return (Token*)currentToken->next; }

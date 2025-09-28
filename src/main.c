@@ -9,13 +9,14 @@
 #define LINE_BUFFER_SIZE 256
 
 void runLine(char[], TokenList*, int);
+void runTests(TokenList*);
 
 int main(int argc, char *argv[]) {
     int result = 0;
     TokenList *tokens = lexer_initTokenList();
     char buffer[LINE_BUFFER_SIZE];
 
-    if (argc == 2){
+    if (argc == 2 && strcmp(argv[1], "test") != 0){
         FILE *fptr = fopen((char*)argv[1], "r");
         if (fptr == NULL) {
             fprintf(stderr, "Error for filepath: \'%s\'\n", (char*)argv[1]);
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
         if (!feof(fptr)) perror("Error reading file");
         if (fclose(fptr) != 0) perror("Error closing file");
     }
+    else if (argc == 2 && strcmp(argv[1], "test") == 0) runTests(tokens);
     else {
         printf("Welcome to the Lisp Interpreter REPL!\nUse Ctrl+C to exit\n");
         
@@ -70,4 +72,14 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         printf("\n");
         fflush(stdout);
     }
+}
+
+void runTests(TokenList* _tokens){
+    printf("Running C tests...\n\n");
+
+    SExpression *plus = parser_initAtom((AtomType)A_ID, "+");
+    SExpression *one = parser_initAtom((AtomType)A_INT, "1");
+    SExpression *two = parser_initAtom((AtomType)A_INT, "2");
+
+    parser_print(cons(plus, cons(one, two)));
 }

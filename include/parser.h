@@ -41,8 +41,9 @@ void parser_clearExpression(SExpression *expr);
 
 /// @brief Initializes an Atom struct
 /// @param type The type of Atom to initialize
+/// @param val A pointer to a C-String that will be casted to the correct data value
 /// @return The pointer to the new Atom struct
-SExpression *parser_initAtom(AtomType type);
+SExpression *parser_initAtom(AtomType type, char *val);
 
 /// @brief Parses an S-Expression
 /// @return An S-Expression
