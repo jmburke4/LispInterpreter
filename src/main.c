@@ -81,5 +81,9 @@ void runTests(TokenList* _tokens){
     SExpression *one = parser_initAtom((AtomType)A_INT, "1");
     SExpression *two = parser_initAtom((AtomType)A_INT, "2");
 
-    parser_print(cons(plus, cons(one, two)));
+    printf("Programmatically built: \n");
+    parser_print(cons(plus, cons(one, cons(two, NULL))));
+
+    printf("\n\nVia lexing:\n");
+    runLine("(+ 1 2)", _tokens, 0);
 }

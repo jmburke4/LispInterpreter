@@ -59,22 +59,20 @@ SExpression *parser_initAtom(AtomType type, char *val){
 SExpression *parser_parseExpression() {
     if (currentToken == NULL) return NULL;
 
+    SExpression *exp = NULL;
     switch (currentToken->type){
         case (TokenType)STRING:
             // Not sure where to determine whether its an identifier or a string
-            SExpression *astr = parser_initAtom(A_STR, currentToken->val);
-            parser_advance();
-            return astr;
+            exp = parser_initAtom(A_STR, currentToken->val);
+            break;
 
         case (TokenType)INT:
-            SExpression *aint = parser_initAtom(A_INT, currentToken->val);
-            parser_advance();
-            return aint;
+            exp = parser_initAtom(A_INT, currentToken->val);
+            break;
 
         case (TokenType)FLOAT:
-            SExpression *aflt = parser_initAtom(A_FLT, currentToken->val);
-            parser_advance();
-            return aflt;
+            exp = parser_initAtom(A_FLT, currentToken->val);
+            break;
 
         case (TokenType)OPEN_PAREN:
             parser_advance();
@@ -83,15 +81,31 @@ SExpression *parser_parseExpression() {
         case (TokenType)SINGLE_QUOTE:
             SExpression* quote = parser_initAtom(A_ID, "quote\0");
             SExpression* quotedVal = parser_initAtom(A_STR, currentToken->val + 1);
-            parser_advance();
-            return cons(quote, quotedVal);
+            exp = cons(quote, cons(quotedVal, NULL)); // Does this need to be NIL terminated or a dotted pair?
+            break;
+
+        case (TokenType)PLUS:
+            exp = parser_initAtom(A_ID, currentToken->val);
+            break;
+
+        case (TokenType)MINUS:
+            exp = parser_initAtom(A_ID, currentToken->val);
+            break;
+
+        case (TokenType)STAR:
+            exp = parser_initAtom(A_ID, currentToken->val);
+            break;
+
+        case (TokenType)SLASH:
+            exp = parser_initAtom(A_ID, currentToken->val);
+            break;
 
         default:
             fprintf(stderr, "Unhandled TokenType: %d\n", currentToken->type);
-            parser_advance();
             break;
     }
-    return NULL;
+    parser_advance();
+    return exp;
 }
 
 SExpression *parser_parseList() {
