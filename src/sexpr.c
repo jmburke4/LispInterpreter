@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "util.h"
 #include "sexpr.h"
 
 SExpression *atom(AtomType type, char *val){
@@ -40,38 +41,99 @@ SExpression *cons(SExpression* car, SExpression* cdr){
     return new;
 }
 
-void print(SExpression *expr) {
-    if (expr == NULL) {
+SExpression *eval(SExpression *exp){
+    return exp;
+}
+
+int isDottedPair(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type != (SExprType)CONS) return UTIL_FALSE;
+    if (isNil(exp->cons.car) == UTIL_FALSE && isNil(exp->cons.cdr) == UTIL_FALSE){
+        if (exp->cons.car->type == (SExprType)ATOM && exp->cons.cdr->type == (SExprType)ATOM) return UTIL_TRUE;
+    }
+    return UTIL_FALSE;
+}
+
+int isFloat(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
+    if (exp->atom.type != (AtomType)A_FLT) return UTIL_FALSE;
+    return UTIL_TRUE;
+}
+
+int isIdentifier(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
+    if (exp->atom.type != (AtomType)A_ID) return UTIL_FALSE;
+    return UTIL_TRUE;
+}
+
+int isInt(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
+    if (exp->atom.type != (AtomType)A_INT) return UTIL_FALSE;
+    return UTIL_TRUE;
+}
+
+int isList(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (isDottedPair(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type == (SExprType)ATOM) return UTIL_FALSE;
+    if (exp->type == (SExprType)CONS && isNil(exp->cons.cdr) == UTIL_TRUE) return UTIL_TRUE;
+    return isList(exp->cons.car) || isList(exp->cons.cdr);
+}
+
+int isNil(SExpression *exp){
+    if (exp == NULL) return UTIL_TRUE;
+    return UTIL_FALSE;
+}
+
+int isNumber(SExpression *exp){ return isFloat(exp) || isInt(exp); }
+
+int isString(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
+    if (exp->atom.type != (AtomType)A_STR) return UTIL_FALSE;
+    return UTIL_TRUE;
+}
+
+int toBool(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    return UTIL_TRUE;
+}
+
+void print(SExpression *exp) {
+    if (exp == NULL) {
         printf("()");
         return;
     }
 
-    if (expr->type == (SExprType)ATOM) {
-        switch (expr->atom.type){
+    if (exp->type == (SExprType)ATOM) {
+        switch (exp->atom.type){
             case A_STR:
             case A_ID:
-                printf("%s", expr->atom.strVal);
+                printf("%s", exp->atom.strVal);
                 break;
 
             case A_INT:
-                printf("%d", expr->atom.intVal);
+                printf("%d", exp->atom.intVal);
                 break;
 
             case A_FLT:
-                printf("%f", expr->atom.floatVal);
+                printf("%f", exp->atom.floatVal);
                 break;
         }
     } 
-    else if (expr->type == (SExprType)CONS) {
+    else if (exp->type == (SExprType)CONS) {
         printf("(");
-        while (expr != NULL && expr->type == CONS) {
-            print(expr->cons.car);
-            expr = expr->cons.cdr;
-            if (expr != NULL) printf(" ");
+        while (exp != NULL && exp->type == CONS) {
+            print(exp->cons.car);
+            exp = exp->cons.cdr;
+            if (exp != NULL) printf(" ");
         }
-        if (expr != NULL) {
+        if (exp != NULL) {
             printf(". ");
-            print(expr);
+            print(exp);
         }
         printf(")");
     }

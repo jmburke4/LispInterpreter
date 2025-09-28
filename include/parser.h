@@ -7,16 +7,16 @@
 /// @brief Advances the linked list to the next token
 void parser_advance();
 
-/// @brief Recursively frees the atoms in an S-Expression
-/// @param expr The S-Expression to free
+/// @brief Recursively frees the atoms in an ```SExpression```
+/// @param expr The ```SExpression``` to free
 void parser_clearExpression(SExpression *expr);
 
-/// @brief Parses an S-Expression
-/// @return An S-Expression
+/// @brief Parses an ```SExpression```
+/// @return An ```SExpression```
 SExpression *parser_parseExpression();
 
-/// @brief Parses a nested list of S-Expressions
-/// @return An S-Expression
+/// @brief Parses a nested list of ```SExpression```s
+/// @return An ```SExpression```
 SExpression *parser_parseList();
 
 /// @brief Initializes the parser global variable with a list of tokens

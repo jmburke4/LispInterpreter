@@ -6,11 +6,11 @@
 #include "sexpr.h"
 #include "parser.h"
 #include "../include/parser.h" // This is here for intellisense
+#include "tester.h"
 
 #define LINE_BUFFER_SIZE 256
 
 void runLine(char[], TokenList*, int);
-void runTests(TokenList*);
 
 int main(int argc, char *argv[]) {
     int result = 0;
@@ -73,18 +73,4 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         printf("\n");
         fflush(stdout);
     }
-}
-
-void runTests(TokenList* _tokens){
-    printf("Running C tests...\n\n");
-
-    SExpression *plus = atom((AtomType)A_ID, "+");
-    SExpression *one = atom((AtomType)A_INT, "1");
-    SExpression *two = atom((AtomType)A_INT, "2");
-
-    printf("Programmatically built: \n");
-    print(cons(plus, cons(one, cons(two, NULL))));
-
-    printf("\n\nVia lexing:\n");
-    runLine("(+ 1 2)", _tokens, 0);
 }
