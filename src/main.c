@@ -3,6 +3,7 @@
 
 #include "util.h"
 #include "lexer.h"
+#include "sexpr.h"
 #include "parser.h"
 #include "../include/parser.h" // This is here for intellisense
 
@@ -65,7 +66,7 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         parser_setList(_tokens->first);
         SExpression *exp = parser_parseExpression();
         lexer_clearTokenList(_tokens);
-        parser_print(exp);
+        print(exp);
         parser_clearExpression(exp);
         
         // Flush output stream for debugging
@@ -77,12 +78,12 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
 void runTests(TokenList* _tokens){
     printf("Running C tests...\n\n");
 
-    SExpression *plus = parser_initAtom((AtomType)A_ID, "+");
-    SExpression *one = parser_initAtom((AtomType)A_INT, "1");
-    SExpression *two = parser_initAtom((AtomType)A_INT, "2");
+    SExpression *plus = atom((AtomType)A_ID, "+");
+    SExpression *one = atom((AtomType)A_INT, "1");
+    SExpression *two = atom((AtomType)A_INT, "2");
 
     printf("Programmatically built: \n");
-    parser_print(cons(plus, cons(one, cons(two, NULL))));
+    print(cons(plus, cons(one, cons(two, NULL))));
 
     printf("\n\nVia lexing:\n");
     runLine("(+ 1 2)", _tokens, 0);
