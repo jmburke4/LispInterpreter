@@ -3,8 +3,10 @@
 
 #include "util.h"
 #include "lexer.h"
+#include "sexpr.h"
 #include "parser.h"
 #include "../include/parser.h" // This is here for intellisense
+#include "tester.h"
 
 #define LINE_BUFFER_SIZE 256
 
@@ -15,7 +17,7 @@ int main(int argc, char *argv[]) {
     TokenList *tokens = lexer_initTokenList();
     char buffer[LINE_BUFFER_SIZE];
 
-    if (argc == 2){
+    if (argc == 2 && strcmp(argv[1], "test") != 0){
         FILE *fptr = fopen((char*)argv[1], "r");
         if (fptr == NULL) {
             fprintf(stderr, "Error for filepath: \'%s\'\n", (char*)argv[1]);
@@ -29,6 +31,7 @@ int main(int argc, char *argv[]) {
         if (!feof(fptr)) perror("Error reading file");
         if (fclose(fptr) != 0) perror("Error closing file");
     }
+    else if (argc == 2 && strcmp(argv[1], "test") == 0) runTests(tokens);
     else {
         printf("Welcome to the Lisp Interpreter REPL!\nUse Ctrl+C to exit\n");
         
@@ -63,7 +66,7 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         parser_setList(_tokens->first);
         SExpression *exp = parser_parseExpression();
         lexer_clearTokenList(_tokens);
-        parser_print(exp);
+        print(exp);
         parser_clearExpression(exp);
         
         // Flush output stream for debugging
