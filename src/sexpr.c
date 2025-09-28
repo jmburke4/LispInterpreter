@@ -45,6 +45,16 @@ SExpression *eval(SExpression *exp){
     return exp;
 }
 
+int isAtom(SExpression *exp){ 
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    return (exp->type == (SExprType)ATOM); 
+}
+
+int isCons(SExpression *exp){
+    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
+    return (exp->type == (SExprType)CONS); 
+}
+
 int isDottedPair(SExpression *exp){
     if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
     if (exp->type != (SExprType)CONS) return UTIL_FALSE;

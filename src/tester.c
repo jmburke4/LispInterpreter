@@ -18,6 +18,22 @@ void runTests(TokenList* _tokens){
     // runLine("(+ 1 2)", _tokens, 0);
 
     /// Testing Predicate functions
+
+    printf("\nisAtom()\n");
+    printf("%d:%d\n", UTIL_TRUE, isAtom(plus));
+    printf("%d:%d\n", UTIL_TRUE, isAtom(one));
+    printf("%d:%d\n", UTIL_TRUE, isAtom(two));
+    printf("%d:%d - Is nil technically an atom?\n", UTIL_FALSE, isAtom(NULL));
+    printf("%d:%d\n", UTIL_FALSE, isAtom(cons(plus, one)));
+    printf("%d:%d\n", UTIL_FALSE, isAtom(cons(plus, cons(one, cons(two, NULL)))));
+
+    printf("\nisCons()\n");
+    printf("%d:%d\n", UTIL_TRUE, isCons(cons(plus, one)));
+    printf("%d:%d\n", UTIL_TRUE, isCons(cons(plus, cons(one, cons(two, NULL)))));
+    printf("%d:%d\n", UTIL_FALSE, isCons(plus));
+    printf("%d:%d\n", UTIL_FALSE, isCons(NULL));
+    printf("%d:%d\n", UTIL_FALSE, isCons(one));
+
     printf("\nisDottedPair()\n");
     printf("%d:%d\n", UTIL_TRUE, isDottedPair(cons(one, two)));
     printf("%d:%d\n", UTIL_FALSE, isDottedPair(cons(one, cons(two, NULL))));

@@ -46,6 +46,16 @@ SExpression *cons(SExpression* car, SExpression* cdr);
 /// @return The evaluated ```SExpression```
 SExpression *eval(SExpression *exp);
 
+/// @brief Checks if an ```SExpression``` is an ```Atom```
+/// @param exp The ```SExpression``` to check
+/// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
+int isAtom(SExpression *exp);
+
+/// @brief Checks if an ```SExpression``` is a ```Cons``` cell
+/// @param exp The ```SExpression``` to check
+/// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
+int isCons(SExpression *exp);
+
 /// @brief Checks if an ```SExpression``` is a dotted pair or not
 /// @param exp The ```SExpression``` to check
 /// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
