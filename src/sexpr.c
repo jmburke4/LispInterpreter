@@ -5,6 +5,38 @@
 #include "util.h"
 #include "sexpr.h"
 
+SExpression *add(SExpression *exp){
+    if (!isDottedPair(exp)){
+        //fprintf(stderr, "S-Expression passed to add() must be a dotted pair\n");
+        return NULL;
+    }
+    
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    AtomType resultType;
+    char resultVal[MAX_WORD_LENGTH];
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            resultType = A_INT;
+            sprintf(resultVal, "%d", a->intVal + b->intVal);
+            break;
+        case A_INT + A_FLT:
+            resultType = A_FLT;
+            if (a->type == (AtomType)A_INT) sprintf(resultVal, "%f", (float)a->intVal + b->floatVal);
+            else sprintf(resultVal, "%f", a->floatVal + (float)b->intVal);
+            break;
+        case A_FLT + A_FLT:
+            resultType = A_FLT;
+            sprintf(resultVal, "%f", a->floatVal + b->floatVal);
+            break;
+        default:
+            fprintf(stderr, "Error in add()\n");
+            return NULL;
+    }
+    return atom(resultType, resultVal);
+}
+
 SExpression *atom(AtomType type, char *val){
     SExpression *atom = malloc(sizeof(SExpression));
     atom->type = (SExprType)ATOM;

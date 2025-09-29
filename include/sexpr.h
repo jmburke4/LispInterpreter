@@ -29,6 +29,11 @@ typedef struct SExpression {
     };
 } SExpression;
 
+/// @brief Adds the numerical values held in the atoms of the passed cons cell
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
+SExpression *add(SExpression *exp);
+
 /// @brief Initializes an Atom struct
 /// @param type The type of Atom to initialize
 /// @param val A pointer to a C-String that will be casted to the correct data value

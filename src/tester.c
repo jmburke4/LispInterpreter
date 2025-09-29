@@ -17,7 +17,24 @@ void runTests(TokenList* _tokens){
     // printf("\n\nVia lexing:\n");
     // runLine("(+ 1 2)", _tokens, 0);
 
-    /// Testing Predicate functions
+    /// Testing SExpr.h functions
+
+    printf("\nadd()");
+    printf("\n3\t");
+    print(add(cons(one, two)));
+    printf("\n3.0\t");
+    print(add(cons(atom(A_FLT, "1.0"), atom(A_FLT, "2.0"))));
+    printf("\n5.0\t");
+    print(add(cons(atom(A_INT, "1"), atom(A_FLT, "4.0"))));
+    printf("\n()\t");
+    print(add(NULL));
+    printf("\n()\t");
+    print(add(one));
+    printf("\n6\t");    // (+ 1 (+ 2 3))
+    print(add(cons(atom(A_INT, "1"), add(cons(atom(A_INT, "2"), atom(A_INT, "3"))))));
+    printf("\n6.0\t");    // (+ 1 (+ 2.0 3))
+    print(add(cons(atom(A_INT, "1"), add(cons(atom(A_FLT, "2.0"), atom(A_INT, "3"))))));
+    printf("\n");
 
     printf("\nisAtom()\n");
     printf("%d:%d\n", UTIL_TRUE, isAtom(plus));

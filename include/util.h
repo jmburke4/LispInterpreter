@@ -7,6 +7,8 @@
 #define UTIL_TRUE 1
 #define UTIL_FALSE 0 
 
+#define MAX_WORD_LENGTH 12
+
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
