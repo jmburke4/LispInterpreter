@@ -13,6 +13,11 @@ SExpression *add(SExpression *exp){
         return NULL;
     }
     
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to add()\t");
+        return NULL;
+    }
+
     Atom *a = &exp->cons.car->atom;
     Atom *b = &exp->cons.cdr->atom;
 
@@ -83,6 +88,11 @@ SExpression *divide(SExpression *exp){
         return NULL;
     }
     
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to divide()\t");
+        return NULL;
+    }
+
     Atom *a = &exp->cons.car->atom;
     Atom *b = &exp->cons.cdr->atom;
 
@@ -186,6 +196,11 @@ SExpression *modulo(SExpression *exp){
         return NULL;
     }
     
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to modulo()\t");
+        return NULL;
+    }
+
     Atom *a = &exp->cons.car->atom;
     Atom *b = &exp->cons.cdr->atom;
 
@@ -217,6 +232,11 @@ SExpression *multiply(SExpression *exp){
         return NULL;
     }
     
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to multiply()\t");
+        return NULL;
+    }
+
     Atom *a = &exp->cons.car->atom;
     Atom *b = &exp->cons.cdr->atom;
 
@@ -251,6 +271,11 @@ SExpression *subtract(SExpression *exp){
         return NULL;
     }
     
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to subtract()\t");
+        return NULL;
+    }
+
     Atom *a = &exp->cons.car->atom;
     Atom *b = &exp->cons.cdr->atom;
 

@@ -34,6 +34,8 @@ void runTests(TokenList* _tokens){
     print(add(cons(atom(A_INT, "1"), add(cons(atom(A_INT, "2"), atom(A_INT, "3"))))));
     printf("\n6.0\t");    // (+ 1 (+ 2.0 3))
     print(add(cons(atom(A_INT, "1"), add(cons(atom(A_FLT, "2.0"), atom(A_INT, "3"))))));
+    printf("\n()\t");
+    print(add(cons(atom(A_INT, "1"), add(cons(atom(A_STR, "2.0"), atom(A_INT, "3"))))));
     printf("\n");
 
     printf("\ndivide()");
@@ -51,6 +53,8 @@ void runTests(TokenList* _tokens){
     print(divide(NULL));
     printf("\n()\t");
     print(divide(one));
+    printf("\n()\t");
+    print(divide(cons(atom(A_STR, "1"), atom(A_FLT, "-3.0"))));
     printf("\n()\t");
     print(divide(cons(atom(A_INT, "1"), atom(A_INT, "0"))));
     printf("\n()\t");
@@ -150,6 +154,8 @@ void runTests(TokenList* _tokens){
     print(modulo(one));
     printf("\n()\t");
     print(modulo(cons(atom(A_INT, "1"), atom(A_INT, "0"))));
+    printf("\n()\t");
+    print(modulo(cons(atom(A_STR, "1"), atom(A_INT, "0"))));
     printf("\n()\t"); // The nested modulo returns 0
     print(modulo(cons(atom(A_INT, "36"), modulo(cons(atom(A_INT, "6"), atom(A_INT, "3"))))));
     printf("\n");
@@ -173,6 +179,8 @@ void runTests(TokenList* _tokens){
     print(multiply(cons(atom(A_INT, "-1"), multiply(cons(atom(A_FLT, "2.0"), atom(A_INT, "3"))))));
     printf("\n0\t");
     print(multiply(cons(one, atom(A_INT, "0"))));
+    printf("\n()\t");
+    print(multiply(cons(one, atom(A_STR, "0"))));
     printf("\n0.0\t");
     print(multiply(cons(atom(A_FLT, "0.0"), two)));
     printf("\n");
@@ -186,6 +194,8 @@ void runTests(TokenList* _tokens){
     print(subtract(cons(atom(A_FLT, "2.0"), atom(A_FLT, "1.0"))));
     printf("\n-3.0\t");
     print(subtract(cons(atom(A_INT, "1"), atom(A_FLT, "4.0"))));
+    printf("\n()\t");
+    print(subtract(cons(atom(A_ID, "1"), atom(A_FLT, "4.0"))));
     printf("\n()\t");
     print(subtract(NULL));
     printf("\n()\t");
