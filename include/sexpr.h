@@ -1,6 +1,8 @@
 #ifndef SEXPR_H
 #define SEXPR_H
 
+#define TRUE atom(A_ID, "true")
+
 /// @brief An enum for the type of an ```SExpression```
 typedef enum { ATOM, CONS } SExprType;
 
@@ -52,10 +54,25 @@ SExpression *cons(SExpression* car, SExpression* cdr);
 /// @note Divide by zero errors are suppressed and return ```nil``` (```NULL```)
 SExpression *divide(SExpression *exp);
 
+/// @brief Checks if the car and cdr of a cons cell are equal to each other in value
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return ```TRUE``` or ```nil``` (```NULL```)
+/// @note If the types of the car and cdr do not match, will silently return ```nil``` (```NULL```)
+SExpression *eq(SExpression *exp);
+
 /// @brief Recursively evaluates an ```SExpression```
 /// @param exp The ```SExpression``` to evaluate
-/// @return The evaluated ```SExpression```
-SExpression *eval(SExpression *exp);
+void eval(SExpression *exp);
+
+/// @brief Checks if the car is greater than the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return ```nil``` (```NULL```) or an ```Atom``` of type ```A_ID``` with the value ```true```
+SExpression *gt(SExpression *exp);
+
+/// @brief Checks if the car is greater than or equal to the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return ```nil``` (```NULL```) or an ```Atom``` of type ```A_ID``` with the value ```true```
+SExpression *gte(SExpression *exp);
 
 /// @brief Checks if an ```SExpression``` is an ```Atom```
 /// @param exp The ```SExpression``` to check
@@ -107,6 +124,16 @@ int isNumber(SExpression *exp);
 /// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
 int isString(SExpression *exp);
 
+/// @brief Checks if the car is less than the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return ```nil``` (```NULL```) or an ```Atom``` of type ```A_ID``` with the value ```true```
+SExpression *lt(SExpression *exp);
+
+/// @brief Checks if the car is less than or equal to the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return ```nil``` (```NULL```) or an ```Atom``` of type ```A_ID``` with the value ```true```
+SExpression *lte(SExpression *exp);
+
 /// @brief Returns the remainder of the car divided by the cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
@@ -118,6 +145,10 @@ SExpression *modulo(SExpression *exp);
 /// @param exp Must be a cons cell with two atoms and no nil terminator
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
 SExpression *multiply(SExpression *exp);
+
+/// @brief If exp is ```NULL```, return an ```Atom``` of type ```A_ID``` with the string ```true```, else return ```NULL```
+/// @param exp The ```SExpression``` to negate
+SExpression *not(SExpression *exp);
 
 /// @brief Returns the numerical difference between the atoms in the car and cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator

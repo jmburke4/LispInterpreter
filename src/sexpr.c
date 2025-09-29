@@ -122,8 +122,113 @@ SExpression *divide(SExpression *exp){
     return atom(resultType, resultVal);
 }
 
-SExpression *eval(SExpression *exp){
-    return exp;
+SExpression *eq(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\t");
+        return NULL;
+    }
+
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    if (a->type != b->type) return NULL;
+
+    switch (a->type){
+        case A_ID:
+        case A_STR:
+            if (strcmp(a->strVal, b->strVal) == 0) return TRUE;
+            else return NULL;
+        case A_INT:
+            if (a->intVal == b->intVal) return TRUE;
+            else return NULL;
+        case A_FLT:
+            if (a->floatVal == b->floatVal) return TRUE;
+            else return NULL;
+        default:
+            fprintf(stderr, "An error occurred in eq()\t");
+            break;
+    }
+    return NULL;
+}
+
+void eval(SExpression *exp){
+    return;
+}
+
+SExpression *gt(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to gt()\t");
+        return NULL;
+    }
+
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    SExpression *resultExp = NULL;
+    int result;
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            result = a->intVal > b->intVal;
+            break;
+        case A_INT + A_FLT:
+            if (a->type == (AtomType)A_INT) result = (float)a->intVal > b->floatVal;
+            else result = a->floatVal > (float)b->intVal;
+            break;
+        case A_FLT + A_FLT:
+            result = a->floatVal > b->floatVal;
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in gt()\t");
+            return NULL;
+    }
+    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    return resultExp;
+}
+
+SExpression *gte(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to gte() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to gte()\t");
+        return NULL;
+    }
+
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    SExpression *resultExp = NULL;
+    int result;
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            result = a->intVal >= b->intVal;
+            break;
+        case A_INT + A_FLT:
+            if (a->type == (AtomType)A_INT) result = (float)a->intVal >= b->floatVal;
+            else result = a->floatVal >= (float)b->intVal;
+            break;
+        case A_FLT + A_FLT:
+            result = a->floatVal >= b->floatVal;
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in gte()\t");
+            return NULL;
+    }
+    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    return resultExp;
 }
 
 int isAtom(SExpression *exp){ 
@@ -186,6 +291,80 @@ int isString(SExpression *exp){
     if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
     if (exp->atom.type != (AtomType)A_STR) return UTIL_FALSE;
     return UTIL_TRUE;
+}
+
+SExpression *lt(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to lt() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to lt()\t");
+        return NULL;
+    }
+
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    SExpression *resultExp = NULL;
+    int result;
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            result = a->intVal < b->intVal;
+            break;
+        case A_INT + A_FLT:
+            if (a->type == (AtomType)A_INT) result = (float)a->intVal < b->floatVal;
+            else result = a->floatVal < (float)b->intVal;
+            break;
+        case A_FLT + A_FLT:
+            result = a->floatVal < b->floatVal;
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in lt()\t");
+            return NULL;
+    }
+    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    return resultExp;
+}
+
+SExpression *lte(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to lte() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
+        fprintf(stderr, "NaN passed to lte()\t");
+        return NULL;
+    }
+
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    SExpression *resultExp = NULL;
+    int result;
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            result = a->intVal <= b->intVal;
+            break;
+        case A_INT + A_FLT:
+            if (a->type == (AtomType)A_INT) result = (float)a->intVal <= b->floatVal;
+            else result = a->floatVal <= (float)b->intVal;
+            break;
+        case A_FLT + A_FLT:
+            result = a->floatVal <= b->floatVal;
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in lte()\t");
+            return NULL;
+    }
+    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    return resultExp;
 }
 
 SExpression *modulo(SExpression *exp){
@@ -261,6 +440,11 @@ SExpression *multiply(SExpression *exp){
             return NULL;
     }
     return atom(resultType, resultVal);
+}
+
+SExpression *not(SExpression *exp){
+    if (isNil(exp)) return TRUE;
+    else return NULL;
 }
 
 SExpression *subtract(SExpression *exp){

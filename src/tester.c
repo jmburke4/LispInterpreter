@@ -65,6 +65,63 @@ void runTests(TokenList* _tokens){
     print(divide(cons(atom(A_INT, "-1"), divide(cons(atom(A_FLT, "6.0"), atom(A_INT, "3"))))));
     printf("\n");
 
+    printf("\neq()");
+    printf("\ntrue\t");
+    print(eq(cons(one, one)));
+    printf("\n()\t");
+    print(eq(cons(one, two)));
+    printf("\n()\t");
+    print(eq(NULL));
+    printf("\n()\t");
+    print(eq(cons(atom(A_STR, "Hello"), atom(A_STR, "HELLO"))));
+    printf("\ntrue\t");
+    print(eq(cons(atom(A_STR, "Hello"), atom(A_STR, "Hello"))));
+    printf("\n()\t");
+    print(eq(cons(atom(A_ID, "Hello"), atom(A_ID, "HELLO"))));
+    printf("\ntrue\t");
+    print(eq(cons(atom(A_ID, "Hello"), atom(A_ID, "Hello"))));
+    printf("\n()\t");
+    print(eq(cons(atom(A_ID, "Hello"), atom(A_STR, "Hello"))));
+    printf("\n");
+
+    printf("\ngt()");
+    printf("\ntrue\t");
+    print(gt(cons(atom(A_INT, "3"), atom(A_INT, "2"))));
+    printf("\n()\t");
+    print(gt(cons(atom(A_INT, "1"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(gt(cons(atom(A_FLT, "3.0"), atom(A_FLT, "2.0"))));
+    printf("\n()\t");
+    print(gt(cons(atom(A_FLT, "1.0"), atom(A_FLT, "2.0"))));
+    printf("\ntrue\t");
+    print(gt(cons(atom(A_FLT, "3.0"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(gt(cons(atom(A_INT, "30"), multiply(cons(atom(A_FLT, "10.0"), atom(A_INT, "2"))))));
+    printf("\n()\t");
+    print(gt(cons(atom(A_INT, "3"), atom(A_FLT, "3.0"))));
+    printf("\n");
+
+    printf("\ngte()");
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_INT, "3"), atom(A_INT, "2"))));
+    printf("\n()\t");
+    print(gte(cons(atom(A_INT, "1"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_FLT, "3.0"), atom(A_FLT, "2.0"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_FLT, "3.0"), atom(A_FLT, "2.0"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_FLT, "3.0"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_INT, "30"), multiply(cons(atom(A_FLT, "10.0"), atom(A_INT, "2"))))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_INT, "3"), atom(A_FLT, "3.0"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_INT, "3"), atom(A_INT, "3"))));
+    printf("\ntrue\t");
+    print(gte(cons(atom(A_FLT, "3.0"), atom(A_FLT, "3.0"))));
+    printf("\n");
+
     printf("\nisAtom()\n");
     printf("%d:%d\n", UTIL_TRUE, isAtom(plus));
     printf("%d:%d\n", UTIL_TRUE, isAtom(one));
@@ -137,6 +194,44 @@ void runTests(TokenList* _tokens){
     printf("%d:%d\n", UTIL_FALSE, isString(NULL));
     printf("%d:%d\n", UTIL_FALSE, isString(cons(atom(A_FLT, "1.2"), atom(A_FLT, "3.4"))));
 
+    printf("\nlt()");
+    printf("\ntrue\t");
+    print(lt(cons(atom(A_INT, "1"), atom(A_INT, "2"))));
+    printf("\n()\t");
+    print(lt(cons(atom(A_INT, "3"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(lt(cons(atom(A_FLT, "1.0"), atom(A_FLT, "2.0"))));
+    printf("\n()\t");
+    print(lt(cons(atom(A_FLT, "3.0"), atom(A_FLT, "2.0"))));
+    printf("\ntrue\t");
+    print(lt(cons(atom(A_FLT, "1.0"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(lt(cons(atom(A_INT, "13"), multiply(cons(atom(A_FLT, "10.0"), atom(A_INT, "2"))))));
+    printf("\n()\t");
+    print(lt(cons(atom(A_INT, "3"), atom(A_FLT, "3.0"))));
+    printf("\n");
+
+    printf("\nlte()");
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_INT, "1"), atom(A_INT, "2"))));
+    printf("\n()\t");
+    print(lte(cons(atom(A_INT, "3"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_FLT, "1.0"), atom(A_FLT, "2.0"))));
+    printf("\n()\t");
+    print(lte(cons(atom(A_FLT, "3.0"), atom(A_FLT, "2.0"))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_FLT, "1.0"), atom(A_INT, "2"))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_INT, "13"), multiply(cons(atom(A_FLT, "10.0"), atom(A_INT, "2"))))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_INT, "3"), atom(A_FLT, "3.0"))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_INT, "3"), atom(A_INT, "3"))));
+    printf("\ntrue\t");
+    print(lte(cons(atom(A_FLT, "3.0"), atom(A_FLT, "3.0"))));
+    printf("\n");
+
     printf("\nmodulo()");
     printf("\n0\t");
     print(modulo(cons(two, one)));
@@ -183,6 +278,17 @@ void runTests(TokenList* _tokens){
     print(multiply(cons(one, atom(A_STR, "0"))));
     printf("\n0.0\t");
     print(multiply(cons(atom(A_FLT, "0.0"), two)));
+    printf("\n");
+
+    printf("\nnot()");
+    printf("\ntrue\t");
+    print(not(NULL));
+    printf("\n()\t");
+    print(not(atom(A_INT, "1")));
+    printf("\n()\t");
+    print(not(eq(cons(atom(A_STR, "Hello"), atom(A_STR, "Hello")))));
+    printf("\ntrue\t");
+    print(not(eq(cons(atom(A_STR, "Hello"), atom(A_STR, "HELLO")))));
     printf("\n");
 
     printf("\nsubtract()");
