@@ -1,8 +1,6 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#define MAX_WORD_LENGTH 12
-
 typedef enum {
     OPEN_PAREN, CLOSE_PAREN,
     
