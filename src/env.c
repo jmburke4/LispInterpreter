@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "util.h"
+#include "env.h"
+
+SExpression *copyExp(SExpression *exp){
+    if (isNil(exp)){
+        fprintf(stderr, "Error: tried copying nil list\n");
+        return NULL;
+    }
+    else if (isAtom(exp)){
+        // this is easy
+        char buffer[MAX_WORD_LENGTH];
+        switch (exp->atom.type){
+            case A_STR:
+            case A_ID:
+                return atom(exp->atom.type, exp->atom.strVal);
+            case A_INT:
+                sprintf(buffer, "%d", exp->atom.intVal);
+                return atom(A_INT, buffer);
+            case A_FLT:
+                sprintf(buffer, "%f", exp->atom.floatVal);
+                return atom(A_FLT, buffer);
+            default:
+                fprintf(stderr, "Unexpted AtomType %d in copyExp()\n", exp->atom.type);
+                return NULL;
+        }
+    }
+    else if (isCons(exp)){
+        // This is easier
+        return cons(copyExp(exp->cons.car), copyExp(exp->cons.cdr));
+    }
+    return NULL;
+}
+
+Environment *initEnvironment(){
+    Environment *environment = malloc(sizeof(Environment));
+    return environment;
+}
+
+Variable *lookup(Environment *environment, char *name){
+    Variable *iterator = environment->top;
+    while (iterator != NULL){
+        if (strcmp(iterator->name, name) == 0) return iterator;
+        iterator = (Variable*)iterator->next;
+    }
+    fprintf(stderr, "%s not found\n", name);
+    return NULL;
+}
+
+Variable *newVariable(char* name, SExpression *exp){
+    Variable *var = malloc(sizeof(Variable));
+    
+    // Copy the name of the variable into a new char so that it does not get freed elsewhere
+    int nameLength = strlen(name) + 1;
+    char nameBuffer[nameLength];
+    strncpy(nameBuffer, name, nameLength);
+    var->name = malloc(sizeof(char) * nameLength);
+    strncpy(var->name, nameBuffer, nameLength);
+
+    // Now I have to do the same thing for the S-Expression
+    var->exp = copyExp(exp);
+    return var;
+}
+
+SExpression *set(Environment *environment, char* name, SExpression *exp){
+    Variable *var = newVariable(name, exp);
+    environment->top->next = (struct Variable*)var;
+    environment->top = var;
+    return environment->top->exp;
+}

@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         if (!feof(fptr)) perror("Error reading file");
         if (fclose(fptr) != 0) perror("Error closing file");
     }
-    else if (argc == 2 && strcmp(argv[1], "test") == 0) runTests(tokens);
+    else if (argc == 2 && strcmp(argv[1], "test") == 0) testEnvironment(); //runTests(tokens);
     else {
         printf("Welcome to the Lisp Interpreter REPL!\nUse Ctrl+C to exit\n");
         

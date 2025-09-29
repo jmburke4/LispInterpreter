@@ -155,6 +155,13 @@ SExpression *eq(SExpression *exp){
 }
 
 void eval(SExpression *exp){
+    if (isNil(exp)) return;
+    if (isCons(exp)){
+        
+    }
+    else if (isAtom(exp)){
+        
+    }
     return;
 }
 

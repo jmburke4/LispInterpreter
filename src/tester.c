@@ -2,6 +2,8 @@
 
 #include "util.h"
 #include "sexpr.h"
+#include "env.h"
+#include "parser.h"
 #include "tester.h"
 
 void runTests(TokenList* _tokens){
@@ -311,4 +313,42 @@ void runTests(TokenList* _tokens){
     printf("\n2.0\t");
     print(subtract(cons(atom(A_INT, "1"), subtract(cons(atom(A_FLT, "2.0"), atom(A_INT, "3"))))));
     printf("\n");
+}
+
+void testEnvironment(){
+    Environment *global = initEnvironment();
+
+    //SExpression *plus = atom(A_ID, "+");
+    SExpression *three = atom(A_INT, "3");
+    SExpression *five = atom(A_INT, "5");
+
+    printf("\nHOLY SHIT I'M TESTING AN ENVIRONMENT\n\n");
+
+    SExpression *result = multiply(cons(three, five));
+    printf("(15)\t");
+    print(cons(result, NULL));
+    fflush(stdout);
+
+    set(global, "x", result);
+
+    result = parser_clearExpression(result);
+
+    printf("\nTry retrieving through result...\n");
+    printf("\n(15)\t");
+    print(cons(result, NULL));
+
+    printf("Try retrieving through x...\n");
+    printf("\n(15)\t");
+    print(cons(lookup(global, "x")->exp, NULL));
+
+    printf("\nNow divide x by 3 and store in x:\n");
+    //result = divide((cons(lookup(global, "x")->exp, three)));
+    set(global, "x", divide((cons(lookup(global, "x")->exp, three))));
+    printf("(5)\t");
+    print(cons(lookup(global, "x")->exp, NULL));
+
+    printf("\nNow set x to 21 and print: ");
+    set(global, "x", atom(A_INT, "21"));
+    print(cons(lookup(global, "x")->exp, NULL));
+    
 }
