@@ -68,7 +68,7 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         eval(exp);
         lexer_clearTokenList(_tokens);
         print(exp);
-        parser_clearExpression(exp);
+        exp = parser_clearExpression(exp);
         
         // Flush output stream for debugging
         printf("\n");

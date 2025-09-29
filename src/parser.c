@@ -11,7 +11,7 @@ Token *currentToken = NULL;
 
 void parser_advance() { if (currentToken != NULL) currentToken = (Token*)currentToken->next; }
 
-void parser_clearExpression(SExpression *expr){
+SExpression *parser_clearExpression(SExpression *expr){
     if (expr != NULL){
         if (expr->type == (SExprType)CONS){
             parser_clearExpression(expr->cons.car);
@@ -19,6 +19,7 @@ void parser_clearExpression(SExpression *expr){
         }
         free(expr);
     }
+    return NULL;
 }
 
 SExpression *parser_parseExpression() {

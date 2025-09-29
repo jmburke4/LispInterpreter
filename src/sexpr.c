@@ -73,6 +73,7 @@ SExpression *atom(AtomType type, char *val){
 }
 
 SExpression *cons(SExpression* car, SExpression* cdr){
+    if (isNil(car) && isNil(cdr)) return NULL;
     SExpression *new = malloc(sizeof(SExpression));
     new->type = (SExprType)CONS;
     new->cons.car = car;
