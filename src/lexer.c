@@ -86,8 +86,16 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '-'){
-            lexer_addToken(tokens, "-\0", (TokenType)MINUS);
-            lexer_lex(current + 1, tokens, line);
+            if (line[current + 1] == ' '){
+                lexer_addToken(tokens, "-\0", (TokenType)MINUS);
+                lexer_lex(current + 1, tokens, line);
+            } 
+            else {
+                char t_str[MAX_WORD_LENGTH];
+                t_str[0] = t;
+                t_str[1] = '\0';
+                lexer_lexNum(current + 1, tokens, t_str, line, 0);
+            }
         }
         else if (t == '+'){
             lexer_addToken(tokens, "+\0", (TokenType)PLUS);

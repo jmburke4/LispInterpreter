@@ -9,7 +9,7 @@
 			"preLaunchTask": "build",
 			"program": "${workspaceFolder}/bin/a.exe",
 			"request": "launch",
-			"args": ["test"],
+			//"args": ["test"],
 			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",
