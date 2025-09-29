@@ -7,7 +7,9 @@
 
 SExpression *add(SExpression *exp){
     if (!isDottedPair(exp)){
-        //fprintf(stderr, "S-Expression passed to add() must be a dotted pair\n");
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to add() must be a dotted pair\t");
         return NULL;
     }
     
@@ -31,7 +33,7 @@ SExpression *add(SExpression *exp){
             sprintf(resultVal, "%f", a->floatVal + b->floatVal);
             break;
         default:
-            fprintf(stderr, "Error in add()\n");
+            fprintf(stderr, "Unrecognized AtomTypes in add()\t");
             return NULL;
     }
     return atom(resultType, resultVal);
@@ -71,6 +73,43 @@ SExpression *cons(SExpression* car, SExpression* cdr){
     new->cons.car = car;
     new->cons.cdr = cdr;
     return new;
+}
+
+SExpression *divide(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to divide() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    if (b->type == A_INT && b->intVal == 0) return NULL; // Divide by zero
+    if (b->type == A_FLT && b->floatVal == 0.0) return NULL; // Divide by zero
+
+    AtomType resultType;
+    char resultVal[MAX_WORD_LENGTH];
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            resultType = A_INT;
+            sprintf(resultVal, "%d", a->intVal / b->intVal);
+            break;
+        case A_INT + A_FLT:
+            resultType = A_FLT;
+            if (a->type == (AtomType)A_INT) sprintf(resultVal, "%f", (float)a->intVal / b->floatVal);
+            else sprintf(resultVal, "%f", a->floatVal / (float)b->intVal);
+            break;
+        case A_FLT + A_FLT:
+            resultType = A_FLT;
+            sprintf(resultVal, "%f", a->floatVal / b->floatVal);
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in divide()\t");
+            return NULL;
+    }
+    return atom(resultType, resultVal);
 }
 
 SExpression *eval(SExpression *exp){
@@ -137,6 +176,105 @@ int isString(SExpression *exp){
     if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
     if (exp->atom.type != (AtomType)A_STR) return UTIL_FALSE;
     return UTIL_TRUE;
+}
+
+SExpression *modulo(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to modulo() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    if (b->type == A_INT && b->intVal == 0) return NULL; // Divide by zero
+
+    AtomType resultType;
+    char resultVal[MAX_WORD_LENGTH];
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            resultType = A_INT;
+            sprintf(resultVal, "%d", a->intVal % b->intVal);
+            break;
+        case A_INT + A_FLT:
+        case A_FLT + A_FLT:
+            fprintf(stderr, "Only integer types are supported for the modulo operation\t");
+            return NULL;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in modulo()\t");
+            return NULL;
+    }
+    return atom(resultType, resultVal);
+}
+
+SExpression *multiply(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to multiply() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    AtomType resultType;
+    char resultVal[MAX_WORD_LENGTH];
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            resultType = A_INT;
+            sprintf(resultVal, "%d", a->intVal * b->intVal);
+            break;
+        case A_INT + A_FLT:
+            resultType = A_FLT;
+            if (a->type == (AtomType)A_INT) sprintf(resultVal, "%f", (float)a->intVal * b->floatVal);
+            else sprintf(resultVal, "%f", a->floatVal * (float)b->intVal);
+            break;
+        case A_FLT + A_FLT:
+            resultType = A_FLT;
+            sprintf(resultVal, "%f", a->floatVal * b->floatVal);
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in multiply()\t");
+            return NULL;
+    }
+    return atom(resultType, resultVal);
+}
+
+SExpression *subtract(SExpression *exp){
+    if (!isDottedPair(exp)){
+        // Keeping error statements inline so that I can reenable them
+        // but not screw up tester.c
+        fprintf(stderr, "S-Expression passed to subtract() must be a dotted pair\t");
+        return NULL;
+    }
+    
+    Atom *a = &exp->cons.car->atom;
+    Atom *b = &exp->cons.cdr->atom;
+
+    AtomType resultType;
+    char resultVal[MAX_WORD_LENGTH];
+    switch(a->type + b->type){
+        case A_INT + A_INT:
+            resultType = A_INT;
+            sprintf(resultVal, "%d", a->intVal - b->intVal);
+            break;
+        case A_INT + A_FLT:
+            resultType = A_FLT;
+            if (a->type == (AtomType)A_INT) sprintf(resultVal, "%f", (float)a->intVal - b->floatVal);
+            else sprintf(resultVal, "%f", a->floatVal - (float)b->intVal);
+            break;
+        case A_FLT + A_FLT:
+            resultType = A_FLT;
+            sprintf(resultVal, "%f", a->floatVal - b->floatVal);
+            break;
+        default:
+            fprintf(stderr, "Unrecognized AtomTypes in subtract()\t");
+            return NULL;
+    }
+    return atom(resultType, resultVal);
 }
 
 int toBool(SExpression *exp){

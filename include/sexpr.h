@@ -29,7 +29,7 @@ typedef struct SExpression {
     };
 } SExpression;
 
-/// @brief Adds the numerical values held in the atoms of the passed cons cell
+/// @brief Returns the numerical sum of the values held in the atoms of the passed cons cell
 /// @param exp Must be a cons cell with two atoms and no nil terminator
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
 SExpression *add(SExpression *exp);
@@ -45,6 +45,12 @@ SExpression *atom(AtomType type, char *val);
 /// @param cdr A pointer to the cdr ```SExpression```
 /// @return A pointer to a new ```SExpression```
 SExpression *cons(SExpression* car, SExpression* cdr);
+
+/// @brief Returns the quotient of the car divided by the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
+/// @note Divide by zero errors are suppressed and return ```nil``` (```NULL```)
+SExpression *divide(SExpression *exp);
 
 /// @brief Recursively evaluates an ```SExpression```
 /// @param exp The ```SExpression``` to evaluate
@@ -100,6 +106,23 @@ int isNumber(SExpression *exp);
 /// @param exp The ```SExpression``` to check
 /// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
 int isString(SExpression *exp);
+
+/// @brief Returns the remainder of the car divided by the cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
+/// @note Divide by zero errors are suppressed and return ```nil``` (```NULL```)
+/// @note Only supports two ```int```s, and will return ```nil``` (```NULL```) if passed a ```float```
+SExpression *modulo(SExpression *exp);
+
+/// @brief Returns the numerical product of the atoms in the car and cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
+SExpression *multiply(SExpression *exp);
+
+/// @brief Returns the numerical difference between the atoms in the car and cdr
+/// @param exp Must be a cons cell with two atoms and no nil terminator
+/// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
+SExpression *subtract(SExpression *exp);
 
 /// @brief Returns the opposite of ```isNil()```
 /// @param exp The ```SExpression``` to check
