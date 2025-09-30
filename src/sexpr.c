@@ -157,36 +157,40 @@ SExpression *eq(SExpression *exp){
 }
 
 SExpression *eval(SExpression *exp, Environment *env){
-    if (isNil(exp)) return NULL;
+    if (isNil(exp)){
+        // if nil return nil
+        return NULL;
+    }
     if (isCons(exp)){
+        if (isNil(exp->cons.cdr)){
+            // ex. if passed (3 ()) return (3)
+            return eval(exp->cons.car, env);
+        }
         if (isIdentifier(exp->cons.car)){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
             if (strcmp(identifier, "+") == 0){
-                //return add();
+                return add(eval(exp->cons.cdr, env));
             }
             else if (strcmp(identifier, "-") == 0){
-
+                return subtract(eval(exp->cons.cdr, env));
             }
             else if (strcmp(identifier, "*") == 0){
-
+                return multiply(eval(exp->cons.cdr, env));
             }
             else if (strcmp(identifier, "/") == 0){
-
+                return divide(eval(exp->cons.cdr, env));
             }
             else if (strcmp(identifier, "%%") == 0){
-
+                return modulo(eval(exp->cons.cdr, env));
             }
             else if (strcmp(identifier, "set") == 0){
                 printf("Set was called!\n");
                 return set(env, exp->cons.cdr->cons.car->atom.strVal, exp->cons.cdr->cons.cdr);
             }
-            
         }
-        else {
-
-        }
+        return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
     }
     else if (isAtom(exp)){
         if (isIdentifier(exp)) {
@@ -281,10 +285,10 @@ int isCons(SExpression *exp){
 }
 
 int isDottedPair(SExpression *exp){
-    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
-    if (exp->type != (SExprType)CONS) return UTIL_FALSE;
-    if (isNil(exp->cons.car) == UTIL_FALSE && isNil(exp->cons.cdr) == UTIL_FALSE){
-        if (exp->cons.car->type == (SExprType)ATOM && exp->cons.cdr->type == (SExprType)ATOM) return UTIL_TRUE;
+    if (isNil(exp)) return UTIL_FALSE;
+    if (isAtom(exp)) return UTIL_FALSE;
+    if (!isNil(exp->cons.car) && !isNil(exp->cons.cdr)){
+        if (isAtom(exp->cons.car) && isAtom(exp->cons.cdr)) return UTIL_TRUE;
     }
     return UTIL_FALSE;
 }

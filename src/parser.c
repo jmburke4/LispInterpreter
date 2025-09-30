@@ -27,9 +27,8 @@ SExpression *parser_parseExpression() {
     SExpression *exp = NULL;
     switch (currentToken->type){
         case (TokenType)STRING:
-            // Not sure where to determine whether its an identifier or a string
-            // I can do this in the lexer by looking up reserved words, or all strings can have double quotes
-            exp = atom(A_STR, currentToken->val);
+            // These are single word identifiers, strings are handled via DOUBLE_QUOTE
+            exp = atom(A_ID, currentToken->val);
             break;
 
         case (TokenType)INT:
@@ -50,6 +49,9 @@ SExpression *parser_parseExpression() {
             exp = cons(quote, cons(quotedVal, NULL)); // Does this need to be NIL terminated or a dotted pair?
             break;
 
+        case (TokenType)DOUBLE_QUOTE:
+            break;    
+
         case (TokenType)PLUS:
             exp = atom(A_ID, currentToken->val);
             break;
@@ -63,6 +65,10 @@ SExpression *parser_parseExpression() {
             break;
 
         case (TokenType)SLASH:
+            exp = atom(A_ID, currentToken->val);
+            break;
+
+        case (TokenType)MOD:
             exp = atom(A_ID, currentToken->val);
             break;
 

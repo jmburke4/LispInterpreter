@@ -111,6 +111,10 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_addToken(tokens, "/\0", (TokenType)SLASH);
             lexer_lex(current + 1, tokens, line);
         }
+        else if (t == '%'){
+            lexer_addToken(tokens, "%%\0", (TokenType)MOD);
+            lexer_lex(current + 1, tokens, line);
+        }
         else if (util_isNum(t)){
             char t_str[MAX_WORD_LENGTH];
             t_str[0] = t;

@@ -68,7 +68,7 @@ Variable *newVariable(char* name, SExpression *exp){
 
 SExpression *set(Environment *environment, char* name, SExpression *exp){
     Variable *var = newVariable(name, exp);
-    environment->top->next = (struct Variable*)var;
+    if (environment->top != NULL) environment->top->next = (struct Variable*)var;
     environment->top = var;
     return environment->top->exp;
 }

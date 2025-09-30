@@ -21,9 +21,9 @@
 typedef enum {
     OPEN_PAREN, CLOSE_PAREN,
     
-    MINUS, PLUS, SLASH, STAR,
+    MINUS, PLUS, SLASH, STAR, MOD,
     
-    SINGLE_QUOTE, DOT, NIL,
+    SINGLE_QUOTE, DOUBLE_QUOTE, DOT, NIL,
     
     NOT, NOTEQ,
     EQ, EQEQ,
