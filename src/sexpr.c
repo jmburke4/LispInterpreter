@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "util.h"
+#include "env.h"
 #include "sexpr.h"
 
 SExpression *add(SExpression *exp){
@@ -154,15 +155,44 @@ SExpression *eq(SExpression *exp){
     return NULL;
 }
 
-void eval(SExpression *exp){
-    if (isNil(exp)) return;
+SExpression *eval(SExpression *exp, Environment *env){
+    if (isNil(exp)) return NULL;
     if (isCons(exp)){
-        
+        if (isIdentifier(exp->cons.car)){
+            char identifier[MAX_WORD_LENGTH];
+            strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
+
+            if (strcmp(identifier, "+") == 0){
+                //return add();
+            }
+            else if (strcmp(identifier, "-") == 0){
+
+            }
+            else if (strcmp(identifier, "*") == 0){
+
+            }
+            else if (strcmp(identifier, "/") == 0){
+
+            }
+            else if (strcmp(identifier, "%%") == 0){
+
+            }
+            else if (strcmp(identifier, "set") == 0){
+                printf("Set was called!\n");
+                return set(env, exp->cons.cdr->cons.car->atom.strVal, exp->cons.cdr->cons.cdr);
+            }
+            
+        }
+        else {
+
+        }
     }
     else if (isAtom(exp)){
-        
+        if (isIdentifier(exp)) {
+            return lookup(env, exp->atom.strVal)->exp;
+        }
     }
-    return;
+    return exp;
 }
 
 SExpression *gt(SExpression *exp){

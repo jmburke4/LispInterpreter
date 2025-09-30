@@ -29,6 +29,7 @@ SExpression *parser_parseExpression() {
     switch (currentToken->type){
         case (TokenType)STRING:
             // Not sure where to determine whether its an identifier or a string
+            // I can do this in the lexer by looking up reserved words, or all strings can have double quotes
             exp = atom(A_STR, currentToken->val);
             break;
 

@@ -62,7 +62,9 @@ SExpression *eq(SExpression *exp);
 
 /// @brief Recursively evaluates an ```SExpression```
 /// @param exp The ```SExpression``` to evaluate
-void eval(SExpression *exp);
+/// @param env A pointer to the ```Environment``` to evaluate in
+/// @return An updated pointer to the ```SExpression``` that was passed as a parameter
+SExpression *eval(SExpression *exp, Environment *env);
 
 /// @brief Checks if the car is greater than the cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
