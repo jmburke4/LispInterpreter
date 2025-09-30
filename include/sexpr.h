@@ -1,35 +1,7 @@
+#include "types.h"
+
 #ifndef SEXPR_H
 #define SEXPR_H
-
-#define TRUE atom(A_ID, "true")
-
-/// @brief An enum for the type of an ```SExpression```
-typedef enum { ATOM, CONS } SExprType;
-
-/// @brief An enum for the type of an ```Atom```
-typedef enum { A_ID, A_STR, A_INT, A_FLT } AtomType;
-
-/// @brief A struct representing an Atom in Lisp
-typedef struct {
-    AtomType type;
-    union {
-        char *strVal;
-        int intVal;
-        float floatVal;
-    };
-} Atom;
-
-/// @brief A struct representing an S-Expression in Lisp
-typedef struct SExpression {
-    SExprType type;
-    union {
-        Atom atom; // for symbols, numbers, strings
-        struct {
-            struct SExpression *car;
-            struct SExpression *cdr;
-        } cons;
-    };
-} SExpression;
 
 /// @brief Returns the numerical sum of the values held in the atoms of the passed cons cell
 /// @param exp Must be a cons cell with two atoms and no nil terminator

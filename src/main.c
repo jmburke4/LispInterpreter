@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "types.h"
 #include "util.h"
 #include "lexer.h"
-#include "env.h"
-#include "sexpr.h"
 #include "parser.h"
-#include "../include/parser.h" // This is here for intellisense
+#include "sexpr.h"
+#include "env.h"
 #include "tester.h"
 
 #define LINE_BUFFER_SIZE 256

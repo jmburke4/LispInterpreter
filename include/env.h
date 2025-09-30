@@ -1,25 +1,7 @@
-#include "sexpr.h"
+#include "types.h"
 
 #ifndef ENV_H
 #define ENV_H
-
-/// @brief This represents a variable held in the environment
-typedef struct {
-    /// @brief The c-string to lookup the ```Variable``` by
-    char* name;
-    /// @brief The ```SExpression``` value of the variable
-    SExpression *exp;
-    /// @brief A pointer to the next ```Variable``` on the stack
-    struct Variable *next;
-} Variable;
-
-/// @brief A stack with each node pointing to a ```Variable```
-typedef struct {
-    /// @brief A pointer to the ```Variable``` on the top of the stack
-    Variable *top;
-    /// @brief A pointer to the next ```Environment```
-    struct Environment *next;
-} Environment;
 
 /// @brief Deep copies an ```SExpression``` for storage in an ```Environment```
 /// @param exp The ```SExpression``` to copy

@@ -1,5 +1,4 @@
-#include "lexer.h"
-#include "sexpr.h"
+#include "types.h"
 
 #ifndef PARSER_H
 #define PARSER_H

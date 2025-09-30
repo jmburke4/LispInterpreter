@@ -1,35 +1,7 @@
+#include "types.h"
+
 #ifndef LEXER_H
 #define LEXER_H
-
-typedef enum {
-    OPEN_PAREN, CLOSE_PAREN,
-    
-    MINUS, PLUS, SLASH, STAR,
-    
-    SINGLE_QUOTE, DOT, NIL,
-    
-    NOT, NOTEQ,
-    EQ, EQEQ,
-    GT, GTE,
-    LT, LTE,
-
-    STRING, INT, FLOAT
-} TokenType;
-
-typedef struct {
-    char *val;
-    TokenType type;
-    struct Token *prev;
-    struct Token *next;
-} Token;
-
-typedef struct {
-    int size;
-    int oparen;
-    int cparen;
-    Token *first;
-    Token *last;
-} TokenList;
 
 /// @brief Append new token to the end of the list
 /// @param list The list to append the token to

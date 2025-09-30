@@ -1,9 +1,10 @@
 #include "stdio.h"
 
+#include "types.h"
 #include "util.h"
+#include "parser.h"
 #include "sexpr.h"
 #include "env.h"
-#include "parser.h"
 #include "tester.h"
 
 void runTests(TokenList* _tokens){

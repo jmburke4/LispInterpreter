@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "types.h"
 
 #ifndef TESTER_H
 #define TESTER_H
@@ -11,6 +11,7 @@
 /// @param _tokens A list of tokens to test with
 void runTests(TokenList*);
 
+/// @brief Runs a series of print statements for testing the ```Environment``` functions
 void testEnvironment();
 
 #pragma GCC diagnostic pop // Restore previous diagnostic settings

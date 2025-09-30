@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lexer.h"
+#include "types.h"
 #include "sexpr.h"
 #include "parser.h"
-#include "../include/parser.h"  // This is here for intellisense
 
 Token *currentToken = NULL;
 

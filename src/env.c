@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util.h"
+#include "types.h"
+#include "sexpr.h"
 #include "env.h"
 
 SExpression *copyExp(SExpression *exp){
