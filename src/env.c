@@ -44,7 +44,7 @@ Environment *initEnvironment(){
 Variable *lookup(Environment *environment, char *name){
     Variable *iterator = environment->top;
     while (iterator != NULL){
-        if (strcmp(iterator->name, name) == 0) return iterator;
+        if (strcmp(iterator->name, name) == 0) return newVariable(name, iterator->exp);
         iterator = (Variable*)iterator->next;
     }
     fprintf(stderr, "%s not found\n", name);
