@@ -15,7 +15,8 @@ Environment *initEnvironment();
 /// @brief Searches the ```Environment``` for a ```Variable```
 /// @param environment The ```Environment``` to look in
 /// @param name The name of the ```Variable``` to look for
-/// @return A ```Variable``` or ```NULL```
+/// @return A ```Variable``` with an ```SExpression``` member that can be ```nil```
+/// @note If the ```Variable``` is not found, lookup will silently return a ```Variable``` with ```nil```
 Variable *lookup(Environment *environment, char *name);
 
 /// @brief Allocates space and deep copies the name and ```SExpression```

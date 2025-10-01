@@ -47,8 +47,7 @@ Variable *lookup(Environment *environment, char *name){
         if (strcmp(iterator->name, name) == 0) return newVariable(name, iterator->exp);
         iterator = (Variable*)iterator->next;
     }
-    fprintf(stderr, "%s not found\n", name);
-    return NULL;
+    return newVariable(name, NULL);
 }
 
 Variable *newVariable(char* name, SExpression *exp){
@@ -62,7 +61,8 @@ Variable *newVariable(char* name, SExpression *exp){
     strncpy(var->name, nameBuffer, nameLength);
 
     // Now I have to do the same thing for the S-Expression
-    var->exp = copyExp(exp);
+    if (exp != NULL) var->exp = copyExp(exp);
+    else var->exp = NULL;
     return var;
 }
 
