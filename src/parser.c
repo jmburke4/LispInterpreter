@@ -26,9 +26,13 @@ SExpression *parser_parseExpression() {
 
     SExpression *exp = NULL;
     switch (currentToken->type){
-        case (TokenType)STRING:
-            // These are single word identifiers, strings are handled via DOUBLE_QUOTE
-            exp = atom(A_ID, currentToken->val);
+        case (TokenType)STRING: // These are single word identifiers, strings are handled via DOUBLE_QUOTE
+            Token *prev = (Token*)currentToken->prev;
+            if (prev->type == OPEN_PAREN && prev->prev != NULL) prev = (Token*)prev->prev;
+            // Treat any token that comes directly after the set command as a string instead
+            // of an identifier so that it is not evaluated later
+            if (prev->type == STRING && strcmp(prev->val, "set") == 0) exp = atom(A_STR, currentToken->val);
+            else exp = atom(A_ID, currentToken->val);
             break;
 
         case (TokenType)INT:

@@ -67,8 +67,8 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl, Environment *env){
         lexer_normalizeList(_tokens);
         parser_setList(_tokens->first);
         SExpression *exp = parser_parseExpression();
-        exp = eval(exp, env);
         lexer_clearTokenList(_tokens);
+        exp = eval(exp, env);
         print(exp);
         exp = parser_clearExpression(exp);
         

@@ -183,8 +183,7 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "gt") == 0) return gt(params);
             else if (strcmp(identifier, "gte") == 0) return gte(params);
             else if (strcmp(identifier, "set") == 0){
-                printf("Set was called!\n");
-                return set(env, exp->cons.cdr->cons.car->atom.strVal, exp->cons.cdr->cons.cdr);
+                return set(env, params->cons.car->atom.strVal, params->cons.cdr);
             }
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
