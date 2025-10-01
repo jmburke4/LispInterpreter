@@ -38,6 +38,8 @@ SExpression *copyExp(SExpression *exp){
 
 Environment *initEnvironment(){
     Environment *environment = malloc(sizeof(Environment));
+    environment->next = NULL;
+    environment->top = NULL;
     return environment;
 }
 
