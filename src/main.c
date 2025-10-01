@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "types.h"
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
             printf("\n>");
 
             if (fgets(buffer, sizeof(buffer), stdin) != NULL){
+                if (strncmp(buffer, "exit", 4) == 0) exit(0);
                 runLine(buffer, tokens, 1, global);
             } 
             else {

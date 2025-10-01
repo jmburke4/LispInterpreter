@@ -131,11 +131,12 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             // skip space
             lexer_lex(current + 1, tokens, line);
         }
-        else if (t == '\r' || t == '\n' || t == ';'){
+        else if (t == '\r' || t == '\n' || t == ';' || t == 7){
             // Exit on carriage return or new line or comment
+            // Where am I getting char 7 (BEL) from?
         }
         else{
-            fprintf(stderr, "ERROR LEXING CHAR: \'%c\'\n", t);
+            fprintf(stderr, "ERROR LEXING CHAR: %c (%d)\n", t, t);
         }
     }
 }
@@ -225,7 +226,7 @@ void lexer_normalizeList(TokenList *list){
 
     int nonParenTokens = list->size - list->oparen - list->cparen;
     if (list->oparen != list->cparen) {
-        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE. Aborting...\n\n", list->oparen, list->cparen);
+        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE\n", list->oparen, list->cparen);
         return;
     }
     else if ((nonParenTokens - 1) == list->oparen){

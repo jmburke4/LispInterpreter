@@ -23,8 +23,10 @@
 
 (eq 1 1.0) ; -> ()
 (eq 1.0 1) ; -> ()
+(eq 1 ()) ; -> ()
+(eq () ()) ; -> true
 ; (eq "abc" "abc") ; -> true ; Strings not supported yet
-(eq x x) ; -> true
+; (eq x x) ; -> true ; Comparing nils not supported yet
 
 
 
@@ -41,8 +43,10 @@
 
 (neq 1 1.0) ; -> true
 (neq 1.0 1) ; -> true
+(neq 1 ()) ; -> true
+(neq () ()) ; -> ()
 ; (neq "abc" "abc") ; -> () ; Strings not supported yet
-(neq x x) ; -> ()
+; (neq x x) ; -> () ; Comparing nils not supported yet
 
 
 
@@ -173,3 +177,32 @@
 (eq 455 (% 6515 1515))
 (eq () (% 1.0 1)
 
+
+
+; Set / Lookup
+
+(eq 4 (set a 4))
+(eq 4 (a))
+(eq 4 a)
+(eq a 4)
+(eq 7 (set a 7))
+(eq 7 (a))
+(eq 7 a)
+(eq a 7)
+(eq 10 (+ a 3))
+(eq (+ 3 a) 10)
+(eq 21 (* a 3))
+(eq (* 3 a) 21)
+
+(eq 4.0 (set a 4.0))
+(eq 4.0 (a))
+(eq 4.0 a)
+(eq a 4.0)
+(eq 7.0 (set a 7.0))
+(eq 7.0 (a))
+(eq 7.0 a)
+(eq a 7.0)
+(eq 10.0 (+ a 3.0))
+(eq (+ 3.0 a) 10.0)
+(eq 21.0 (* a 3.0))
+(eq (* 3.0 a) 21.0)
