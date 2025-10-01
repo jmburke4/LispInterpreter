@@ -170,21 +170,18 @@ SExpression *eval(SExpression *exp, Environment *env){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
-            if (strcmp(identifier, "+") == 0){
-                return add(eval(exp->cons.cdr, env));
-            }
-            else if (strcmp(identifier, "-") == 0){
-                return subtract(eval(exp->cons.cdr, env));
-            }
-            else if (strcmp(identifier, "*") == 0){
-                return multiply(eval(exp->cons.cdr, env));
-            }
-            else if (strcmp(identifier, "/") == 0){
-                return divide(eval(exp->cons.cdr, env));
-            }
-            else if (strcmp(identifier, "%%") == 0){
-                return modulo(eval(exp->cons.cdr, env));
-            }
+            SExpression *params = eval(exp->cons.cdr, env);
+            if (strcmp(identifier, "+") == 0) return add(params);
+            else if (strcmp(identifier, "-") == 0) return subtract(params);
+            else if (strcmp(identifier, "*") == 0) return multiply(params);
+            else if (strcmp(identifier, "/") == 0) return divide(params);
+            else if (strcmp(identifier, "%%") == 0) return modulo(params);
+            else if (strcmp(identifier, "eq") == 0) return eq(params);
+            else if (strcmp(identifier, "neq") == 0) return not(eq(params));
+            else if (strcmp(identifier, "lt") == 0) return lt(params);
+            else if (strcmp(identifier, "lte") == 0) return lte(params);
+            else if (strcmp(identifier, "gt") == 0) return gt(params);
+            else if (strcmp(identifier, "gte") == 0) return gte(params);
             else if (strcmp(identifier, "set") == 0){
                 printf("Set was called!\n");
                 return set(env, exp->cons.cdr->cons.car->atom.strVal, exp->cons.cdr->cons.cdr);

@@ -50,25 +50,17 @@ SExpression *parser_parseExpression() {
             break;
 
         case (TokenType)DOUBLE_QUOTE:
-            break;    
-
         case (TokenType)PLUS:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)MINUS:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)STAR:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)SLASH:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)MOD:
+        case (TokenType)EQ:
+        case (TokenType)NOTEQ:
+        case (TokenType)LT:
+        case (TokenType)LTE:
+        case (TokenType)GT:
+        case (TokenType)GTE:
             exp = atom(A_ID, currentToken->val);
             break;
 

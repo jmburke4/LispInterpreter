@@ -149,8 +149,16 @@ void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *li
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            if (lexeme[0] == '\'') lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
-            else lexer_addToken(tokens, lexeme, (TokenType)STRING);
+            TokenType type = STRING;
+            if (lexeme[0] == '\'') type = SINGLE_QUOTE;
+            else if (strcmp(lexeme, "eq") == 0) type = EQ;
+            else if (strcmp(lexeme, "neq") == 0) type = NOTEQ;
+            else if (strcmp(lexeme, "lt") == 0) type = LT;
+            else if (strcmp(lexeme, "lte") == 0) type = LTE;
+            else if (strcmp(lexeme, "gt") == 0) type = GT;
+            else if (strcmp(lexeme, "gte") == 0) type = GTE;
+            
+            lexer_addToken(tokens, lexeme, type);
             lexer_lex(current, tokens, line);
         }
     }
