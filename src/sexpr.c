@@ -2,19 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "types.h"
 #include "util.h"
+#include "env.h"
 #include "sexpr.h"
 
 SExpression *add(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to add() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to add() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to add()\t");
+        fprintf(stderr, "NaN passed to add()\n");
         return NULL;
     }
 
@@ -38,7 +40,7 @@ SExpression *add(SExpression *exp){
             sprintf(resultVal, "%f", a->floatVal + b->floatVal);
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in add()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in add()\n");
             return NULL;
     }
     return atom(resultType, resultVal);
@@ -84,12 +86,12 @@ SExpression *divide(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to divide() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to divide() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to divide()\t");
+        fprintf(stderr, "NaN passed to divide()\n");
         return NULL;
     }
 
@@ -116,17 +118,18 @@ SExpression *divide(SExpression *exp){
             sprintf(resultVal, "%f", a->floatVal / b->floatVal);
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in divide()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in divide()\n");
             return NULL;
     }
     return atom(resultType, resultVal);
 }
 
 SExpression *eq(SExpression *exp){
+    if (isCons(exp) && exp->cons.car == NULL && exp->cons.cdr == NULL) return TRUE;
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to eq() must be a dotted pair\n");
         return NULL;
     }
 
@@ -147,26 +150,62 @@ SExpression *eq(SExpression *exp){
             if (a->floatVal == b->floatVal) return TRUE;
             else return NULL;
         default:
-            fprintf(stderr, "An error occurred in eq()\t");
+            fprintf(stderr, "An error occurred in eq()\n");
             break;
     }
     return NULL;
 }
 
-void eval(SExpression *exp){
-    return;
+SExpression *eval(SExpression *exp, Environment *env){
+    if (isNil(exp)){
+        // if nil return nil
+        return NULL;
+    }
+    if (isCons(exp)){
+        if (isNil(exp->cons.cdr)){
+            // ex. if passed (3 ()) return (3)
+            return eval(exp->cons.car, env);
+        }
+        if (isIdentifier(exp->cons.car)){
+            char identifier[MAX_WORD_LENGTH];
+            strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
+
+            SExpression *params = eval(exp->cons.cdr, env);
+            if (strcmp(identifier, "+") == 0) return add(params);
+            else if (strcmp(identifier, "-") == 0) return subtract(params);
+            else if (strcmp(identifier, "*") == 0) return multiply(params);
+            else if (strcmp(identifier, "/") == 0) return divide(params);
+            else if (strcmp(identifier, "%%") == 0) return modulo(params);
+            else if (strcmp(identifier, "eq") == 0) return eq(params);
+            else if (strcmp(identifier, "neq") == 0) return not(eq(params));
+            else if (strcmp(identifier, "lt") == 0) return lt(params);
+            else if (strcmp(identifier, "lte") == 0) return lte(params);
+            else if (strcmp(identifier, "gt") == 0) return gt(params);
+            else if (strcmp(identifier, "gte") == 0) return gte(params);
+            else if (strcmp(identifier, "set") == 0){
+                return set(env, params->cons.car->atom.strVal, params->cons.cdr);
+            }
+        }
+        return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
+    }
+    else if (isAtom(exp)){
+        if (isIdentifier(exp)) {
+            return lookup(env, exp->atom.strVal)->exp;
+        }
+    }
+    return exp;
 }
 
 SExpression *gt(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to gt()\t");
+        fprintf(stderr, "NaN passed to gt()\n");
         return NULL;
     }
 
@@ -187,7 +226,7 @@ SExpression *gt(SExpression *exp){
             result = a->floatVal > b->floatVal;
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in gt()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in gt()\n");
             return NULL;
     }
     if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
@@ -198,12 +237,12 @@ SExpression *gte(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to gte() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to gte() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to gte()\t");
+        fprintf(stderr, "NaN passed to gte()\n");
         return NULL;
     }
 
@@ -224,7 +263,7 @@ SExpression *gte(SExpression *exp){
             result = a->floatVal >= b->floatVal;
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in gte()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in gte()\n");
             return NULL;
     }
     if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
@@ -242,10 +281,10 @@ int isCons(SExpression *exp){
 }
 
 int isDottedPair(SExpression *exp){
-    if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
-    if (exp->type != (SExprType)CONS) return UTIL_FALSE;
-    if (isNil(exp->cons.car) == UTIL_FALSE && isNil(exp->cons.cdr) == UTIL_FALSE){
-        if (exp->cons.car->type == (SExprType)ATOM && exp->cons.cdr->type == (SExprType)ATOM) return UTIL_TRUE;
+    if (isNil(exp)) return UTIL_FALSE;
+    if (isAtom(exp)) return UTIL_FALSE;
+    if (!isNil(exp->cons.car) && !isNil(exp->cons.cdr)){
+        if (isAtom(exp->cons.car) && isAtom(exp->cons.cdr)) return UTIL_TRUE;
     }
     return UTIL_FALSE;
 }
@@ -297,12 +336,12 @@ SExpression *lt(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to lt() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to lt() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to lt()\t");
+        fprintf(stderr, "NaN passed to lt()\n");
         return NULL;
     }
 
@@ -323,7 +362,7 @@ SExpression *lt(SExpression *exp){
             result = a->floatVal < b->floatVal;
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in lt()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in lt()\n");
             return NULL;
     }
     if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
@@ -334,12 +373,12 @@ SExpression *lte(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to lte() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to lte() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to lte()\t");
+        fprintf(stderr, "NaN passed to lte()\n");
         return NULL;
     }
 
@@ -360,7 +399,7 @@ SExpression *lte(SExpression *exp){
             result = a->floatVal <= b->floatVal;
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in lte()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in lte()\n");
             return NULL;
     }
     if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
@@ -371,12 +410,12 @@ SExpression *modulo(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to modulo() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to modulo() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to modulo()\t");
+        fprintf(stderr, "NaN passed to modulo()\n");
         return NULL;
     }
 
@@ -394,10 +433,10 @@ SExpression *modulo(SExpression *exp){
             break;
         case A_INT + A_FLT:
         case A_FLT + A_FLT:
-            fprintf(stderr, "Only integer types are supported for the modulo operation\t");
+            fprintf(stderr, "Only integer types are supported for the modulo operation\n");
             return NULL;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in modulo()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in modulo()\n");
             return NULL;
     }
     return atom(resultType, resultVal);
@@ -407,12 +446,12 @@ SExpression *multiply(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to multiply() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to multiply() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to multiply()\t");
+        fprintf(stderr, "NaN passed to multiply()\n");
         return NULL;
     }
 
@@ -436,7 +475,7 @@ SExpression *multiply(SExpression *exp){
             sprintf(resultVal, "%f", a->floatVal * b->floatVal);
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in multiply()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in multiply()\n");
             return NULL;
     }
     return atom(resultType, resultVal);
@@ -451,12 +490,12 @@ SExpression *subtract(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
-        fprintf(stderr, "S-Expression passed to subtract() must be a dotted pair\t");
+        fprintf(stderr, "S-Expression passed to subtract() must be a dotted pair\n");
         return NULL;
     }
     
     if (!isNumber(exp->cons.car) || !isNumber(exp->cons.cdr)){
-        fprintf(stderr, "NaN passed to subtract()\t");
+        fprintf(stderr, "NaN passed to subtract()\n");
         return NULL;
     }
 
@@ -480,7 +519,7 @@ SExpression *subtract(SExpression *exp){
             sprintf(resultVal, "%f", a->floatVal - b->floatVal);
             break;
         default:
-            fprintf(stderr, "Unrecognized AtomTypes in subtract()\t");
+            fprintf(stderr, "Unrecognized AtomTypes in subtract()\n");
             return NULL;
     }
     return atom(resultType, resultVal);

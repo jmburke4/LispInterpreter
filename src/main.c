@@ -1,21 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "types.h"
 #include "util.h"
 #include "lexer.h"
-#include "sexpr.h"
 #include "parser.h"
-#include "../include/parser.h" // This is here for intellisense
+#include "sexpr.h"
+#include "env.h"
 #include "tester.h"
 
 #define LINE_BUFFER_SIZE 256
 
-void runLine(char[], TokenList*, int);
+void runLine(char[], TokenList*, int, Environment*);
 
 int main(int argc, char *argv[]) {
     int result = 0;
     TokenList *tokens = lexer_initTokenList();
     char buffer[LINE_BUFFER_SIZE];
+    Environment *global = initEnvironment();
 
     if (argc == 2 && strcmp(argv[1], "test") != 0){
         FILE *fptr = fopen((char*)argv[1], "r");
@@ -25,13 +28,13 @@ int main(int argc, char *argv[]) {
         }
 
         while (fgets(buffer, sizeof(buffer), fptr) != NULL){
-            runLine(buffer, tokens, 0);
+            runLine(buffer, tokens, 0, global);
         }
 
         if (!feof(fptr)) perror("Error reading file");
         if (fclose(fptr) != 0) perror("Error closing file");
     }
-    else if (argc == 2 && strcmp(argv[1], "test") == 0) runTests(tokens);
+    else if (argc == 2 && strcmp(argv[1], "test") == 0) testEnvironment(); //runTests(tokens);
     else {
         printf("Welcome to the Lisp Interpreter REPL!\nUse Ctrl+C to exit\n");
         
@@ -39,7 +42,8 @@ int main(int argc, char *argv[]) {
             printf("\n>");
 
             if (fgets(buffer, sizeof(buffer), stdin) != NULL){
-                runLine(buffer, tokens, 1);
+                if (strncmp(buffer, "exit", 4) == 0) exit(0);
+                runLine(buffer, tokens, 1, global);
             } 
             else {
                 fprintf(stderr, "Error reading input.\n");
@@ -50,7 +54,7 @@ int main(int argc, char *argv[]) {
     return result;
 }
 
-void runLine(char _buffer[], TokenList* _tokens, int _repl){
+void runLine(char _buffer[], TokenList* _tokens, int _repl, Environment *env){
     // fgets includes the newline character if there's space.
     // To remove it, you can find and replace it with a null terminator.
     size_t len = strlen(_buffer);
@@ -65,10 +69,10 @@ void runLine(char _buffer[], TokenList* _tokens, int _repl){
         lexer_normalizeList(_tokens);
         parser_setList(_tokens->first);
         SExpression *exp = parser_parseExpression();
-        eval(exp);
         lexer_clearTokenList(_tokens);
+        exp = eval(exp, env);
         print(exp);
-        parser_clearExpression(exp);
+        exp = parser_clearExpression(exp);
         
         // Flush output stream for debugging
         printf("\n");

@@ -1,35 +1,7 @@
+#include "types.h"
+
 #ifndef SEXPR_H
 #define SEXPR_H
-
-#define TRUE atom(A_ID, "true")
-
-/// @brief An enum for the type of an ```SExpression```
-typedef enum { ATOM, CONS } SExprType;
-
-/// @brief An enum for the type of an ```Atom```
-typedef enum { A_ID, A_STR, A_INT, A_FLT } AtomType;
-
-/// @brief A struct representing an Atom in Lisp
-typedef struct {
-    AtomType type;
-    union {
-        char *strVal;
-        int intVal;
-        float floatVal;
-    };
-} Atom;
-
-/// @brief A struct representing an S-Expression in Lisp
-typedef struct SExpression {
-    SExprType type;
-    union {
-        Atom atom; // for symbols, numbers, strings
-        struct {
-            struct SExpression *car;
-            struct SExpression *cdr;
-        } cons;
-    };
-} SExpression;
 
 /// @brief Returns the numerical sum of the values held in the atoms of the passed cons cell
 /// @param exp Must be a cons cell with two atoms and no nil terminator
@@ -62,7 +34,9 @@ SExpression *eq(SExpression *exp);
 
 /// @brief Recursively evaluates an ```SExpression```
 /// @param exp The ```SExpression``` to evaluate
-void eval(SExpression *exp);
+/// @param env A pointer to the ```Environment``` to evaluate in
+/// @return An updated pointer to the ```SExpression``` that was passed as a parameter
+SExpression *eval(SExpression *exp, Environment *env);
 
 /// @brief Checks if the car is greater than the cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator

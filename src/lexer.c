@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "types.h"
 #include "util.h"
 #include "lexer.h"
 
@@ -109,6 +111,10 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_addToken(tokens, "/\0", (TokenType)SLASH);
             lexer_lex(current + 1, tokens, line);
         }
+        else if (t == '%'){
+            lexer_addToken(tokens, "%%\0", (TokenType)MOD);
+            lexer_lex(current + 1, tokens, line);
+        }
         else if (util_isNum(t)){
             char t_str[MAX_WORD_LENGTH];
             t_str[0] = t;
@@ -125,11 +131,12 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             // skip space
             lexer_lex(current + 1, tokens, line);
         }
-        else if (t == '\r' || t == '\n' || t == ';'){
+        else if (t == '\r' || t == '\n' || t == ';' || t == 7){
             // Exit on carriage return or new line or comment
+            // Where am I getting char 7 (BEL) from?
         }
         else{
-            fprintf(stderr, "ERROR LEXING CHAR: \'%c\'\n", t);
+            fprintf(stderr, "ERROR LEXING CHAR: %c (%d)\n", t, t);
         }
     }
 }
@@ -143,8 +150,16 @@ void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *li
             lexer_lexAlpha(current + 1, tokens, lexeme, line);
         }
         else {
-            if (lexeme[0] == '\'') lexer_addToken(tokens, lexeme, (TokenType)SINGLE_QUOTE);
-            else lexer_addToken(tokens, lexeme, (TokenType)STRING);
+            TokenType type = STRING;
+            if (lexeme[0] == '\'') type = SINGLE_QUOTE;
+            else if (strcmp(lexeme, "eq") == 0) type = EQ;
+            else if (strcmp(lexeme, "neq") == 0) type = NOTEQ;
+            else if (strcmp(lexeme, "lt") == 0) type = LT;
+            else if (strcmp(lexeme, "lte") == 0) type = LTE;
+            else if (strcmp(lexeme, "gt") == 0) type = GT;
+            else if (strcmp(lexeme, "gte") == 0) type = GTE;
+            
+            lexer_addToken(tokens, lexeme, type);
             lexer_lex(current, tokens, line);
         }
     }
@@ -211,7 +226,7 @@ void lexer_normalizeList(TokenList *list){
 
     int nonParenTokens = list->size - list->oparen - list->cparen;
     if (list->oparen != list->cparen) {
-        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE. Aborting...\n\n", list->oparen, list->cparen);
+        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE\n", list->oparen, list->cparen);
         return;
     }
     else if ((nonParenTokens - 1) == list->oparen){

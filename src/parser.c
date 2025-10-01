@@ -2,16 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lexer.h"
+#include "types.h"
 #include "sexpr.h"
 #include "parser.h"
-#include "../include/parser.h"  // This is here for intellisense
 
 Token *currentToken = NULL;
 
 void parser_advance() { if (currentToken != NULL) currentToken = (Token*)currentToken->next; }
 
-void parser_clearExpression(SExpression *expr){
+SExpression *parser_clearExpression(SExpression *expr){
     if (expr != NULL){
         if (expr->type == (SExprType)CONS){
             parser_clearExpression(expr->cons.car);
@@ -19,6 +18,7 @@ void parser_clearExpression(SExpression *expr){
         }
         free(expr);
     }
+    return NULL;
 }
 
 SExpression *parser_parseExpression() {
@@ -26,9 +26,13 @@ SExpression *parser_parseExpression() {
 
     SExpression *exp = NULL;
     switch (currentToken->type){
-        case (TokenType)STRING:
-            // Not sure where to determine whether its an identifier or a string
-            exp = atom(A_STR, currentToken->val);
+        case (TokenType)STRING: // These are single word identifiers, strings are handled via DOUBLE_QUOTE
+            Token *prev = (Token*)currentToken->prev;
+            if (prev->type == OPEN_PAREN && prev->prev != NULL) prev = (Token*)prev->prev;
+            // Treat any token that comes directly after the set command as a string instead
+            // of an identifier so that it is not evaluated later
+            if (prev->type == STRING && strcmp(prev->val, "set") == 0) exp = atom(A_STR, currentToken->val);
+            else exp = atom(A_ID, currentToken->val);
             break;
 
         case (TokenType)INT:
@@ -49,19 +53,18 @@ SExpression *parser_parseExpression() {
             exp = cons(quote, cons(quotedVal, NULL)); // Does this need to be NIL terminated or a dotted pair?
             break;
 
+        case (TokenType)DOUBLE_QUOTE:
         case (TokenType)PLUS:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)MINUS:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)STAR:
-            exp = atom(A_ID, currentToken->val);
-            break;
-
         case (TokenType)SLASH:
+        case (TokenType)MOD:
+        case (TokenType)EQ:
+        case (TokenType)NOTEQ:
+        case (TokenType)LT:
+        case (TokenType)LTE:
+        case (TokenType)GT:
+        case (TokenType)GTE:
             exp = atom(A_ID, currentToken->val);
             break;
 

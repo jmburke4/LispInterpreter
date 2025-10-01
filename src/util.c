@@ -1,6 +1,7 @@
-#include "util.h"
-
 #include <stdio.h>
+
+#include "types.h"
+#include "util.h"
 
 int util_isAlpha(char t){
     if ((int)t >= 97 && (int)t <= 122){
