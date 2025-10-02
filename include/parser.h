@@ -14,10 +14,6 @@ SExpression *parser_clearExpression(SExpression *expr);
 /// @return An ```SExpression```
 SExpression *parser_parseExpression();
 
-/// @brief Parses a nested list of ```SExpression```s
-/// @return An ```SExpression```
-SExpression *parser_parseList();
-
 /// @brief Initializes the parser global variable with a list of tokens
 /// @param head The head of the list of tokens to use
 void parser_setList(Token *head);

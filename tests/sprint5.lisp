@@ -18,6 +18,17 @@
 (eq 1.1 1.1) ; -> true
 (eq 1.1234567890 1.1234567890) ; -> true
 
+(eq (true) true) ; -> true
+(eq (true) ()) ; -> ()
+(eq () true) ; -> ()
+(eq () ()) ; -> ()
+(eq (not ()) (not ())) ; -> true
+(eq (not (true)) (not (true))) ; -> true
+
+(not (true)) ; -> ()
+(not ()) ; -> true
+
+
 ; Please note that the types of the atoms being compared must be the same
 ; (identifiers, strings, integers, floating-point numbers)
 
@@ -25,8 +36,12 @@
 (eq 1.0 1) ; -> ()
 (eq 1 ()) ; -> ()
 (eq () ()) ; -> true
+(eq (true) true) ; -> true
+(eq (true) ()) ; -> ()
+(eq () true) ; -> ()
+(set x 3) ; -> 3
 ; (eq "abc" "abc") ; -> true ; Strings not supported yet
-; (eq x x) ; -> true ; Comparing nils not supported yet
+(eq (x) x) ; -> true ; Comparing nils not supported yet
 
 
 
@@ -51,6 +66,34 @@
 
 
 ; LT
+
+(eq (true) (lt 3 4))
+(eq () (lt 4 4))
+(eq () (lt 5 4))
+(eq () (lt 3 -4))
+(eq (true) (lt -4 -4))
+(eq (true) (lt -5 -4))
+
+(eq (true) (lt 3.0 4.0))
+(eq () (lt 4.0 4.0))
+(eq () (lt 5.0 4.0))
+(eq () (lt 3.0 -4.0))
+(eq (true) (lt -4.0 -4.0))
+(eq (true) (lt -5.0 -4.0))
+
+(eq (true) (lt 3.0 4))
+(eq () (lt 4.0 4))
+(eq () (lt 5.0 4))
+(eq () (lt 3.0 -4))
+(eq (true) (lt -4.0 -4))
+(eq (true) (lt -5.0 -4))
+
+(eq (true) (lt 3 4.0))
+(eq () (lt 4 4.0))
+(eq () (lt 5 4.0))
+(eq () (lt 3 -4.0))
+(eq (true) (lt -4 -4.0))
+(eq (true) (lt -5 -4.0))
 
 
 
@@ -91,6 +134,7 @@
 (eq 579 (+ 123 456))
 (eq 6 (+ 1 (+ 2 3)))
 (eq 6 (+ (+ 1 2) 3))
+
 
 
 ; Subtraction
@@ -175,7 +219,7 @@
 (eq 2 (% 12 5))
 (eq 0 (% 10 5))
 (eq 455 (% 6515 1515))
-(eq () (% 1.0 1)
+(eq () (% 1.0 1))
 
 
 
@@ -184,25 +228,25 @@
 (eq 4 (set a 4))
 (eq 4 (a))
 (eq 4 a)
-(eq a 4)
+(eq (a) 4)
 (eq 7 (set a 7))
 (eq 7 (a))
 (eq 7 a)
-(eq a 7)
-(eq 10 (+ a 3))
+(eq (a) 7)
+(eq 10 (+ (a) 3))
 (eq (+ 3 a) 10)
-(eq 21 (* a 3))
+(eq 21 (* (a) 3))
 (eq (* 3 a) 21)
 
 (eq 4.0 (set a 4.0))
 (eq 4.0 (a))
 (eq 4.0 a)
-(eq a 4.0)
+(eq (a) 4.0)
 (eq 7.0 (set a 7.0))
 (eq 7.0 (a))
 (eq 7.0 a)
-(eq a 7.0)
-(eq 10.0 (+ a 3.0))
+(eq (a) 7.0)
+(eq 10.0 (+ (a) 3.0))
 (eq (+ 3.0 a) 10.0)
-(eq 21.0 (* a 3.0))
+(eq 21.0 (* (a) 3.0))
 (eq (* 3.0 a) 21.0)

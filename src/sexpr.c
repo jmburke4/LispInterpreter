@@ -74,6 +74,26 @@ SExpression *atom(AtomType type, char *val){
     return atom;
 }
 
+SExpression *car(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return exp->cons.car;
+}
+
+SExpression *cdr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return exp->cons.cdr;
+}
+
+SExpression *cadr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return car(cdr(exp));
+}
+
+SExpression *caddr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return car(cdr(cdr(exp)));
+}
+
 SExpression *cons(SExpression* car, SExpression* cdr){
     SExpression *new = malloc(sizeof(SExpression));
     new->type = (SExprType)CONS;
@@ -125,7 +145,11 @@ SExpression *divide(SExpression *exp){
 }
 
 SExpression *eq(SExpression *exp){
-    if (isCons(exp) && exp->cons.car == NULL && exp->cons.cdr == NULL) return TRUE;
+    if (isCons(exp)){
+        // nil comparisons
+        if (exp->cons.car == NULL && exp->cons.cdr == NULL) return TRUE;
+        if (exp->cons.car == NULL || exp->cons.cdr == NULL) return NULL;
+    }
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
         // but not screw up tester.c
@@ -162,6 +186,9 @@ SExpression *eval(SExpression *exp, Environment *env){
         return NULL;
     }
     if (isCons(exp)){
+        if (isNil(exp->cons.car) && isNil(exp->cons.cdr)){
+            return NULL;
+        }
         if (isNil(exp->cons.cdr)){
             // ex. if passed (3 ()) return (3)
             return eval(exp->cons.car, env);
@@ -182,14 +209,23 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "lte") == 0) return lte(params);
             else if (strcmp(identifier, "gt") == 0) return gt(params);
             else if (strcmp(identifier, "gte") == 0) return gte(params);
-            else if (strcmp(identifier, "set") == 0){
-                return set(env, params->cons.car->atom.strVal, params->cons.cdr);
-            }
+            else if (strcmp(identifier, "set") == 0) return set(env, params->cons.car->atom.strVal, params->cons.cdr);
+            else if (strcmp(identifier, "car") == 0) return car(params);
+            else if (strcmp(identifier, "cdr") == 0) return cdr(params);
+            else if (strcmp(identifier, "cadr") == 0) return cadr(params);
+            else if (strcmp(identifier, "caddr") == 0) return caddr(params);
+            else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
+            else if (strcmp(identifier, "quote") == 0) return cdr(exp);
+            else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
+            else if (strcmp(identifier, "and") == 0) return NULL;
+            else if (strcmp(identifier, "or") == 0) return NULL;
+            return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
     }
     else if (isAtom(exp)){
         if (isIdentifier(exp)) {
+            if (strcmp(exp->atom.strVal, "true") == 0) return exp;
             return lookup(env, exp->atom.strVal)->exp;
         }
     }

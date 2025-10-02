@@ -45,12 +45,17 @@ SExpression *parser_parseExpression() {
 
         case (TokenType)OPEN_PAREN:
             parser_advance();
-            return parser_parseList();
+            exp = parser_parseExpression();
+            break;
+
+        case (TokenType)CLOSE_PAREN:
+            return exp;
 
         case (TokenType)SINGLE_QUOTE:
             SExpression* quote = atom(A_ID, "quote\0");
             SExpression* quotedVal = atom(A_STR, currentToken->val + 1);
-            exp = cons(quote, cons(quotedVal, NULL)); // Does this need to be NIL terminated or a dotted pair?
+            // Does this need to be NIL terminated or a dotted pair?
+            exp = cons(quote, cons(quotedVal, NULL));
             break;
 
         case (TokenType)DOUBLE_QUOTE:
@@ -73,19 +78,7 @@ SExpression *parser_parseExpression() {
             break;
     }
     parser_advance();
-    return exp;
-}
-
-SExpression *parser_parseList() {
-    if (currentToken == NULL || currentToken->type == (TokenType)CLOSE_PAREN){
-        parser_advance();
-        return NULL; // nil
-    }
-    
-    SExpression *car = parser_parseExpression();
-    SExpression *cdr = parser_parseList();
-
-    return cons(car, cdr);
+    return cons(exp, parser_parseExpression());
 }
 
 void parser_setList(Token *head){ currentToken = head; }
