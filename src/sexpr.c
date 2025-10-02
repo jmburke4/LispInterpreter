@@ -211,6 +211,7 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "cdr") == 0) return cdr(params);
             else if (strcmp(identifier, "cadr") == 0) return cadr(params);
             else if (strcmp(identifier, "caddr") == 0) return caddr(params);
+            else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
