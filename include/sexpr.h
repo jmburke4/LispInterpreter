@@ -14,6 +14,26 @@ SExpression *add(SExpression *exp);
 /// @return The pointer to the new Atom struct
 SExpression *atom(AtomType type, char *val);
 
+/// @brief Returns the first element in a list
+/// @param exp The List to return an element from
+/// @return A pointer to an ```SExpression```
+SExpression *car(SExpression *exp);
+
+/// @brief Returns the rest of the elements in a list
+/// @param exp The List to return elements from
+/// @return A pointer to an ```SExpression```
+SExpression *cdr(SExpression *exp);
+
+/// @brief Returns the second element in a list
+/// @param exp The List to return an element from
+/// @return A pointer to an ```SExpression```
+SExpression *cadr(SExpression *exp);
+
+/// @brief Returns the third element in a list
+/// @param exp The List to return an element from
+/// @return A pointer to an ```SExpression```
+SExpression *caddr(SExpression *exp);
+
 /// @brief Creates a cons cell with two ```SExpression```s
 /// @param car A pointer to the car ```SExpression```
 /// @param cdr A pointer to the cdr ```SExpression```

@@ -74,6 +74,26 @@ SExpression *atom(AtomType type, char *val){
     return atom;
 }
 
+SExpression *car(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return exp->cons.car;
+}
+
+SExpression *cdr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return exp->cons.cdr;
+}
+
+SExpression *cadr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return car(cdr(exp));
+}
+
+SExpression *caddr(SExpression *exp){
+    if (isNil(exp) || isAtom(exp)) return NULL;
+    return car(cdr(cdr(exp)));
+}
+
 SExpression *cons(SExpression* car, SExpression* cdr){
     SExpression *new = malloc(sizeof(SExpression));
     new->type = (SExprType)CONS;
@@ -187,6 +207,10 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "gt") == 0) return gt(params);
             else if (strcmp(identifier, "gte") == 0) return gte(params);
             else if (strcmp(identifier, "set") == 0) return set(env, params->cons.car->atom.strVal, params->cons.cdr);
+            else if (strcmp(identifier, "car") == 0) return car(params);
+            else if (strcmp(identifier, "cdr") == 0) return cdr(params);
+            else if (strcmp(identifier, "cadr") == 0) return cadr(params);
+            else if (strcmp(identifier, "caddr") == 0) return caddr(params);
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
