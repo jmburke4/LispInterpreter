@@ -25,6 +25,9 @@
 (eq 1.0 1) ; -> ()
 (eq 1 ()) ; -> ()
 (eq () ()) ; -> true
+(eq true true) ; -> true
+(eq true ()) ; -> ()
+(eq () true) ; -> ()
 ; (eq "abc" "abc") ; -> true ; Strings not supported yet
 ; (eq x x) ; -> true ; Comparing nils not supported yet
 
@@ -175,7 +178,7 @@
 (eq 2 (% 12 5))
 (eq 0 (% 10 5))
 (eq 455 (% 6515 1515))
-(eq () (% 1.0 1)
+(eq () (% 1.0 1))
 
 
 

@@ -319,37 +319,43 @@ void runTests(TokenList* _tokens){
 void testEnvironment(){
     Environment *global = initEnvironment();
 
-    //SExpression *plus = atom(A_ID, "+");
+    SExpression *eq = atom(A_ID, "eq");
+    SExpression *plus = atom(A_ID, "+");
     SExpression *three = atom(A_INT, "3");
     SExpression *five = atom(A_INT, "5");
+    SExpression *eight = atom(A_INT, "8");
 
-    printf("\nHOLY SHIT I'M TESTING AN ENVIRONMENT\n\n");
-
-    SExpression *result = multiply(cons(three, five));
-    printf("(15)\t");
-    print(cons(result, NULL));
-    fflush(stdout);
-
-    set(global, "x", result);
-
-    result = parser_clearExpression(result);
-
-    printf("\nTry retrieving through result...\n");
-    printf("\n(15)\t");
-    print(cons(result, NULL));
-
-    printf("Try retrieving through x...\n");
-    printf("\n(15)\t");
-    print(cons(lookup(global, "x")->exp, NULL));
-
-    printf("\nNow divide x by 3 and store in x:\n");
-    //result = divide((cons(lookup(global, "x")->exp, three)));
-    set(global, "x", divide((cons(lookup(global, "x")->exp, three))));
-    printf("(5)\t");
-    print(cons(lookup(global, "x")->exp, NULL));
-
-    printf("\nNow set x to 21 and print: ");
-    set(global, "x", atom(A_INT, "21"));
-    print(cons(lookup(global, "x")->exp, NULL));
+    SExpression *set = atom(A_ID, "set");
+    SExpression *a = atom(A_STR, "a");
+    SExpression *evala = atom(A_ID, "a");
     
+    /// Expression building and evaluating
+
+    SExpression *exp = cons(set, cons(a, eight));
+    printf("\n(set a 8) ; -> 8 : ");
+    print(eval(exp, global));
+
+    exp = evala;
+    printf("\n(a) ; -> 8 : ");
+    print(eval(exp, global));
+
+    exp = cons(eq, cons(evala, eight));
+    printf("\n(eq a 8) ; -> true : ");
+    print(eval(exp, global));
+
+    exp = cons(eq, cons(cons(evala, NULL), eight));
+    printf("\n(eq (a ()) 8) ; -> true : ");
+    print(eval(exp, global));
+
+    exp = cons(eq, cons(eight, evala));
+    printf("\n(eq 8 a) ; -> true : ");
+    print(eval(exp, global));
+
+    exp = cons(eq, cons(eight, cons(plus, cons(three, five))));
+    printf("\n(eq 8 (+ 3 5)) ; -> true : ");
+    print(eval(exp, global));
+
+    exp = cons(eq, cons(cons(plus, cons(three, five)), eight));
+    printf("\n(eq (+ 3 5) 8) ; -> true : ");
+    print(eval(exp, global));
 }
