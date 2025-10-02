@@ -18,6 +18,17 @@
 (eq 1.1 1.1) ; -> true
 (eq 1.1234567890 1.1234567890) ; -> true
 
+(eq (true) true) ; -> true
+(eq (true) ()) ; -> ()
+(eq () true) ; -> ()
+(eq () ()) ; -> ()
+(eq (not ()) (not ())) ; -> true
+(eq (not (true)) (not (true))) ; -> true
+
+(not (true)) ; -> ()
+(not ()) ; -> true
+
+
 ; Please note that the types of the atoms being compared must be the same
 ; (identifiers, strings, integers, floating-point numbers)
 

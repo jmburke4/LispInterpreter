@@ -186,6 +186,9 @@ SExpression *eval(SExpression *exp, Environment *env){
         return NULL;
     }
     if (isCons(exp)){
+        if (isNil(exp->cons.car) && isNil(exp->cons.cdr)){
+            return NULL;
+        }
         if (isNil(exp->cons.cdr)){
             // ex. if passed (3 ()) return (3)
             return eval(exp->cons.car, env);
@@ -213,12 +216,16 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "caddr") == 0) return caddr(params);
             else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
             else if (strcmp(identifier, "quote") == 0) return cdr(exp);
+            else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
+            else if (strcmp(identifier, "and") == 0) return NULL;
+            else if (strcmp(identifier, "or") == 0) return NULL;
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
     }
     else if (isAtom(exp)){
         if (isIdentifier(exp)) {
+            if (strcmp(exp->atom.strVal, "true") == 0) return exp;
             return lookup(env, exp->atom.strVal)->exp;
         }
     }
