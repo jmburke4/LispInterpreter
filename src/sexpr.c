@@ -46,6 +46,16 @@ SExpression *add(SExpression *exp){
     return atom(resultType, resultVal);
 }
 
+SExpression *and(SExpression *exp){
+    if (isAtom(exp)){
+        fprintf(stderr, "Atom passed to and()\n");
+        return NULL;
+    }
+    if (isNil(car(exp)) && isNil(cdr(exp))) return TRUE;
+    if (isNil(car(exp)) || isNil(cdr(exp))) return NULL;
+    return TRUE;
+}
+
 SExpression *atom(AtomType type, char *val){
     SExpression *atom = malloc(sizeof(SExpression));
     atom->type = (SExprType)ATOM;
@@ -217,8 +227,8 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
             else if (strcmp(identifier, "quote") == 0) return cdr(exp);
             else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
-            else if (strcmp(identifier, "and") == 0) return NULL;
-            else if (strcmp(identifier, "or") == 0) return NULL;
+            else if (strcmp(identifier, "and") == 0) return and(params);
+            else if (strcmp(identifier, "or") == 0) return or(params);
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
@@ -520,6 +530,18 @@ SExpression *multiply(SExpression *exp){
 SExpression *not(SExpression *exp){
     if (isNil(exp)) return TRUE;
     else return NULL;
+}
+
+SExpression *or(SExpression *exp){
+    if (isAtom(exp)){
+        fprintf(stderr, "Atom passed to or()\n");
+        return NULL;
+    }
+    if (isNil(car(exp))){
+        if (isNil(cdr(exp))) return NULL;
+        else return TRUE;
+    }
+    return TRUE;
 }
 
 SExpression *subtract(SExpression *exp){

@@ -8,6 +8,11 @@
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
 SExpression *add(SExpression *exp);
 
+/// @brief If ```car(exp)``` and ```cdr(exp)```
+/// @param exp The cons cell to evaluate
+/// @return ```()``` or ```true```
+SExpression *and(SExpression *exp);
+
 /// @brief Initializes an Atom struct
 /// @param type The type of Atom to initialize
 /// @param val A pointer to a C-String that will be casted to the correct data value
@@ -143,6 +148,11 @@ SExpression *multiply(SExpression *exp);
 /// @brief If exp is ```NULL```, return an ```Atom``` of type ```A_ID``` with the string ```true```, else return ```NULL```
 /// @param exp The ```SExpression``` to negate
 SExpression *not(SExpression *exp);
+
+/// @brief If ```car(exp)``` or ```cdr(exp)```
+/// @param exp The cons cell to evaluate
+/// @return ```()``` or ```true```
+SExpression *or(SExpression *exp);
 
 /// @brief Returns the numerical difference between the atoms in the car and cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
