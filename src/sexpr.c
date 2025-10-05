@@ -46,6 +46,16 @@ SExpression *add(SExpression *exp){
     return atom(resultType, resultVal);
 }
 
+SExpression *and(SExpression *exp, Environment *env){
+    if (isAtom(exp)){
+        fprintf(stderr, "Atom passed to and()\n");
+        return NULL;
+    }
+    if (isNil(eval(car(exp), env))) return NULL;
+    else if (isNil(eval(cdr(exp), env))) return NULL;
+    return TRUE;
+}
+
 SExpression *atom(AtomType type, char *val){
     SExpression *atom = malloc(sizeof(SExpression));
     atom->type = (SExprType)ATOM;
@@ -92,6 +102,12 @@ SExpression *cadr(SExpression *exp){
 SExpression *caddr(SExpression *exp){
     if (isNil(exp) || isAtom(exp)) return NULL;
     return car(cdr(cdr(exp)));
+}
+
+SExpression *cond(SExpression *exp, Environment *env){
+    if (exp == NULL) return NULL;
+    if (eval(car(exp), env) != NULL) return eval(car(cdr(exp)), env);
+    return cond((cdr(cdr(exp))), env);
 }
 
 SExpression *cons(SExpression* car, SExpression* cdr){
@@ -197,6 +213,13 @@ SExpression *eval(SExpression *exp, Environment *env){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
+            // delay evaluation of expression in and(), or(), if(), cond(), quote()
+            if (strcmp(identifier, "and") == 0) return and(cdr(exp), env);
+            else if (strcmp(identifier, "or") == 0) return or(cdr(exp), env);
+            else if (strcmp(identifier, "if") == 0) return lif(cdr(exp), env);
+            else if (strcmp(identifier, "cond") == 0) return cond(cdr(exp), env);
+            else if (strcmp(identifier, "quote") == 0) return cdr(exp);
+
             SExpression *params = eval(exp->cons.cdr, env);
             if (strcmp(identifier, "+") == 0) return add(params);
             else if (strcmp(identifier, "-") == 0) return subtract(params);
@@ -215,10 +238,7 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "cadr") == 0) return cadr(params);
             else if (strcmp(identifier, "caddr") == 0) return caddr(params);
             else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
-            else if (strcmp(identifier, "quote") == 0) return cdr(exp);
             else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
-            else if (strcmp(identifier, "and") == 0) return NULL;
-            else if (strcmp(identifier, "or") == 0) return NULL;
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
@@ -366,6 +386,12 @@ int isString(SExpression *exp){
     if (exp->type != (SExprType)ATOM) return UTIL_FALSE;
     if (exp->atom.type != (AtomType)A_STR) return UTIL_FALSE;
     return UTIL_TRUE;
+}
+
+// Lisp-If
+SExpression *lif(SExpression *exp, Environment *env){
+    if (eval(car(exp), env) == NULL) return eval(cdr(cdr(exp)), env);
+    return eval(car(cdr(exp)), env);
 }
 
 SExpression *lt(SExpression *exp){
@@ -522,6 +548,54 @@ SExpression *not(SExpression *exp){
     else return NULL;
 }
 
+SExpression *or(SExpression *exp, Environment *env){
+    if (isAtom(exp)){
+        fprintf(stderr, "Atom passed to or()\n");
+        return NULL;
+    }
+    if (isNil(eval(car(exp), env))){
+        if (isNil(eval(cdr(exp), env))) return NULL;
+    }
+    return TRUE;
+}
+
+void print(SExpression *exp) {
+    if (exp == NULL) {
+        printf("()");
+        return;
+    }
+
+    if (exp->type == (SExprType)ATOM) {
+        switch (exp->atom.type){
+            case A_STR:
+            case A_ID:
+                printf("%s", exp->atom.strVal);
+                break;
+
+            case A_INT:
+                printf("%d", exp->atom.intVal);
+                break;
+
+            case A_FLT:
+                printf("%f", exp->atom.floatVal);
+                break;
+        }
+    } 
+    else if (exp->type == (SExprType)CONS) {
+        printf("(");
+        while (exp != NULL && exp->type == CONS) {
+            print(exp->cons.car);
+            exp = exp->cons.cdr;
+            if (exp != NULL) printf(" ");
+        }
+        if (exp != NULL) {
+            printf(". ");
+            print(exp);
+        }
+        printf(")");
+    }
+}
+
 SExpression *subtract(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
@@ -564,41 +638,4 @@ SExpression *subtract(SExpression *exp){
 int toBool(SExpression *exp){
     if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
     return UTIL_TRUE;
-}
-
-void print(SExpression *exp) {
-    if (exp == NULL) {
-        printf("()");
-        return;
-    }
-
-    if (exp->type == (SExprType)ATOM) {
-        switch (exp->atom.type){
-            case A_STR:
-            case A_ID:
-                printf("%s", exp->atom.strVal);
-                break;
-
-            case A_INT:
-                printf("%d", exp->atom.intVal);
-                break;
-
-            case A_FLT:
-                printf("%f", exp->atom.floatVal);
-                break;
-        }
-    } 
-    else if (exp->type == (SExprType)CONS) {
-        printf("(");
-        while (exp != NULL && exp->type == CONS) {
-            print(exp->cons.car);
-            exp = exp->cons.cdr;
-            if (exp != NULL) printf(" ");
-        }
-        if (exp != NULL) {
-            printf(". ");
-            print(exp);
-        }
-        printf(")");
-    }
 }
