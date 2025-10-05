@@ -40,6 +40,12 @@ SExpression *cadr(SExpression *exp);
 /// @return A pointer to an ```SExpression```
 SExpression *caddr(SExpression *exp);
 
+/// @brief Returns the associated result paired with the first expression that evaluates true
+/// @param exp The ```SExpression``` to evaluate
+/// @param env The ```Environment``` to evaluate in
+/// @return The ```SExpression``` result of the evaluated expression
+SExpression *cond(SExpression *exp, Environment *env);
+
 /// @brief Creates a cons cell with two ```SExpression```s
 /// @param car A pointer to the car ```SExpression```
 /// @param cdr A pointer to the cdr ```SExpression```
@@ -124,6 +130,12 @@ int isNumber(SExpression *exp);
 /// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
 int isString(SExpression *exp);
 
+/// @brief (Lisp If) Evaluates car(exp) and returns car(cdr) on true or cdr(cdr) on false
+/// @param exp The ```SExpression``` with the expression to evaluate and the expressions to return
+/// @param env The ```Environment``` to evaluate in
+/// @return An ```SExpression``` of whichever branch was evaluated
+SExpression *lif(SExpression *exp, Environment *env);
+
 /// @brief Checks if the car is less than the cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
 /// @return ```nil``` (```NULL```) or an ```Atom``` of type ```A_ID``` with the value ```true```
@@ -156,6 +168,10 @@ SExpression *not(SExpression *exp);
 /// @return ```()``` or ```true```
 SExpression *or(SExpression *exp, Environment *env);
 
+/// @brief Prints an ```SExpression```
+/// @param exp The ```SExpression``` to print
+void print(SExpression *exp);
+
 /// @brief Returns the numerical difference between the atoms in the car and cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
@@ -165,9 +181,5 @@ SExpression *subtract(SExpression *exp);
 /// @param exp The ```SExpression``` to check
 /// @return ```UTIL_TRUE``` or ```UTIL_FALSE```
 int toBool(SExpression *exp);
-
-/// @brief Prints an ```SExpression```
-/// @param exp The ```SExpression``` to print
-void print(SExpression *exp);
 
 #endif

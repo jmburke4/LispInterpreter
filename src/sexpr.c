@@ -104,6 +104,12 @@ SExpression *caddr(SExpression *exp){
     return car(cdr(cdr(exp)));
 }
 
+SExpression *cond(SExpression *exp, Environment *env){
+    if (exp == NULL) return NULL;
+    if (eval(car(exp), env) != NULL) return eval(car(cdr(exp)), env);
+    return cond((cdr(cdr(exp))), env);
+}
+
 SExpression *cons(SExpression* car, SExpression* cdr){
     SExpression *new = malloc(sizeof(SExpression));
     new->type = (SExprType)CONS;
@@ -207,9 +213,11 @@ SExpression *eval(SExpression *exp, Environment *env){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
-            // delay evaluation of expression in and() and or() and quote()
+            // delay evaluation of expression in and(), or(), if(), cond(), quote()
             if (strcmp(identifier, "and") == 0) return and(cdr(exp), env);
             else if (strcmp(identifier, "or") == 0) return or(cdr(exp), env);
+            else if (strcmp(identifier, "if") == 0) return lif(cdr(exp), env);
+            else if (strcmp(identifier, "cond") == 0) return cond(cdr(exp), env);
             else if (strcmp(identifier, "quote") == 0) return cdr(exp);
 
             SExpression *params = eval(exp->cons.cdr, env);
@@ -380,6 +388,12 @@ int isString(SExpression *exp){
     return UTIL_TRUE;
 }
 
+// Lisp-If
+SExpression *lif(SExpression *exp, Environment *env){
+    if (eval(car(exp), env) == NULL) return eval(cdr(cdr(exp)), env);
+    return eval(car(cdr(exp)), env);
+}
+
 SExpression *lt(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
@@ -545,6 +559,43 @@ SExpression *or(SExpression *exp, Environment *env){
     return TRUE;
 }
 
+void print(SExpression *exp) {
+    if (exp == NULL) {
+        printf("()");
+        return;
+    }
+
+    if (exp->type == (SExprType)ATOM) {
+        switch (exp->atom.type){
+            case A_STR:
+            case A_ID:
+                printf("%s", exp->atom.strVal);
+                break;
+
+            case A_INT:
+                printf("%d", exp->atom.intVal);
+                break;
+
+            case A_FLT:
+                printf("%f", exp->atom.floatVal);
+                break;
+        }
+    } 
+    else if (exp->type == (SExprType)CONS) {
+        printf("(");
+        while (exp != NULL && exp->type == CONS) {
+            print(exp->cons.car);
+            exp = exp->cons.cdr;
+            if (exp != NULL) printf(" ");
+        }
+        if (exp != NULL) {
+            printf(". ");
+            print(exp);
+        }
+        printf(")");
+    }
+}
+
 SExpression *subtract(SExpression *exp){
     if (!isDottedPair(exp)){
         // Keeping error statements inline so that I can reenable them
@@ -587,41 +638,4 @@ SExpression *subtract(SExpression *exp){
 int toBool(SExpression *exp){
     if (isNil(exp) == UTIL_TRUE) return UTIL_FALSE;
     return UTIL_TRUE;
-}
-
-void print(SExpression *exp) {
-    if (exp == NULL) {
-        printf("()");
-        return;
-    }
-
-    if (exp->type == (SExprType)ATOM) {
-        switch (exp->atom.type){
-            case A_STR:
-            case A_ID:
-                printf("%s", exp->atom.strVal);
-                break;
-
-            case A_INT:
-                printf("%d", exp->atom.intVal);
-                break;
-
-            case A_FLT:
-                printf("%f", exp->atom.floatVal);
-                break;
-        }
-    } 
-    else if (exp->type == (SExprType)CONS) {
-        printf("(");
-        while (exp != NULL && exp->type == CONS) {
-            print(exp->cons.car);
-            exp = exp->cons.cdr;
-            if (exp != NULL) printf(" ");
-        }
-        if (exp != NULL) {
-            printf(". ");
-            print(exp);
-        }
-        printf(")");
-    }
 }
