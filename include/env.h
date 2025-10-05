@@ -8,9 +8,13 @@
 /// @return A pointer to the new ```SExpression```
 SExpression *copyExp(SExpression *exp);
 
+SExpression *define(Environment *env, SExpression *exp);
+
 /// @brief Allocates space for a new ```Environment```
 /// @return A pointer to the new ```Environment```
 Environment *initEnvironment();
+
+Environment *localEnvironment(Environment* previous);
 
 /// @brief Searches the ```Environment``` for a ```Variable```
 /// @param environment The ```Environment``` to look in
@@ -21,9 +25,10 @@ Variable *lookup(Environment *environment, char *name);
 
 /// @brief Allocates space and deep copies the name and ```SExpression```
 /// @param name The name of the ```Variable```
+/// @param type 0 : variable, 1 : function
 /// @param exp The ```SExpression``` value of the ```Variable```
 /// @return A pointer to a ```Variable``` with the deep copied values
-Variable *newVariable(char* name, SExpression *exp);
+Variable *newVariable(char* name, int type, SExpression *exp, SExpression *params);
 
 /// @brief Creates a new variable and stores a pointer to it in the ```Environment```
 /// @param environment The ```Environment``` to store the new ```Variable``` in

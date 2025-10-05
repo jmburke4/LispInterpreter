@@ -101,13 +101,13 @@ SExpression *cadr(SExpression *exp){
 
 SExpression *caddr(SExpression *exp){
     if (isNil(exp) || isAtom(exp)) return NULL;
-    return car(cdr(cdr(exp)));
+    return cadr(cdr(exp));
 }
 
 SExpression *cond(SExpression *exp, Environment *env){
     if (exp == NULL) return NULL;
-    if (eval(car(exp), env) != NULL) return eval(car(cdr(exp)), env);
-    return cond((cdr(cdr(exp))), env);
+    if (eval(car(exp), env) != NULL) return eval(cadr(exp), env);
+    return cond(cdr(cdr(exp)), env);
 }
 
 SExpression *cons(SExpression* car, SExpression* cdr){
@@ -214,12 +214,39 @@ SExpression *eval(SExpression *exp, Environment *env){
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
             // delay evaluation of expression in and(), or(), if(), cond(), quote()
+            // and do not allow overload
             if (strcmp(identifier, "and") == 0) return and(cdr(exp), env);
             else if (strcmp(identifier, "or") == 0) return or(cdr(exp), env);
             else if (strcmp(identifier, "if") == 0) return lif(cdr(exp), env);
             else if (strcmp(identifier, "cond") == 0) return cond(cdr(exp), env);
             else if (strcmp(identifier, "quote") == 0) return cdr(exp);
+            else if (strcmp(identifier, "define") == 0) return define(env, cdr(exp));
 
+            Variable *id = lookup(env, car(exp)->atom.strVal);
+            if(id != NULL && id->type == FUNC){
+                // execute function and pass parameters
+                // push new environment
+                //   push new variables
+                //   eval func expression in that environment
+                Environment *local = localEnvironment(env);
+                
+                // Loop through required and given parameters in function declaration
+                SExpression *reqPar = id->param;
+                SExpression *givPar = cdr(exp);
+                while (reqPar != NULL){
+                    set(local, car(reqPar)->atom.strVal, eval(car(givPar), env));
+                    reqPar = cdr(reqPar);
+                    givPar = cdr(givPar);
+                }
+
+                return eval(id->exp, local);
+            }
+            else if (id->exp != NULL && id->type == VAR){
+                if (isNil(cdr(exp))) return id->exp;
+                return cons(id->exp, eval(cdr(exp), env));
+            }
+
+            // These functions are overloadable
             SExpression *params = eval(exp->cons.cdr, env);
             if (strcmp(identifier, "+") == 0) return add(params);
             else if (strcmp(identifier, "-") == 0) return subtract(params);
@@ -391,7 +418,7 @@ int isString(SExpression *exp){
 // Lisp-If
 SExpression *lif(SExpression *exp, Environment *env){
     if (eval(car(exp), env) == NULL) return eval(cdr(cdr(exp)), env);
-    return eval(car(cdr(exp)), env);
+    return eval(cadr(exp), env);
 }
 
 SExpression *lt(SExpression *exp){

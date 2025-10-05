@@ -71,28 +71,28 @@
 (eq () (lt 4 4))
 (eq () (lt 5 4))
 (eq () (lt 3 -4))
-(eq (true) (lt -4 -4))
+(eq () (lt -4 -4))
 (eq (true) (lt -5 -4))
 
 (eq (true) (lt 3.0 4.0))
 (eq () (lt 4.0 4.0))
 (eq () (lt 5.0 4.0))
 (eq () (lt 3.0 -4.0))
-(eq (true) (lt -4.0 -4.0))
+(eq () (lt -4.0 -4.0))
 (eq (true) (lt -5.0 -4.0))
 
 (eq (true) (lt 3.0 4))
 (eq () (lt 4.0 4))
 (eq () (lt 5.0 4))
 (eq () (lt 3.0 -4))
-(eq (true) (lt -4.0 -4))
+(eq () (lt -4.0 -4))
 (eq (true) (lt -5.0 -4))
 
 (eq (true) (lt 3 4.0))
 (eq () (lt 4 4.0))
 (eq () (lt 5 4.0))
 (eq () (lt 3 -4.0))
-(eq (true) (lt -4 -4.0))
+(eq () (lt -4 -4.0))
 (eq (true) (lt -5 -4.0))
 
 

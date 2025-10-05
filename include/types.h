@@ -80,10 +80,13 @@ typedef struct SExpression {
 
 /// @brief This represents a variable held in the environment
 typedef struct {
+    enum { VAR, FUNC } type;
     /// @brief The c-string to lookup the ```Variable``` by
     char* name;
     /// @brief The ```SExpression``` value of the variable
     SExpression *exp;
+
+    SExpression *param;
     /// @brief A pointer to the next ```Variable``` on the stack
     struct Variable *next;
 } Variable;
