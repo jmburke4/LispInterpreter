@@ -59,6 +59,8 @@ SExpression *parser_parseExpression() {
             break;
 
         case (TokenType)DOUBLE_QUOTE:
+            exp = atom(A_STR, currentToken->val);
+            break;
         case (TokenType)PLUS:
         case (TokenType)MINUS:
         case (TokenType)STAR:

@@ -83,6 +83,12 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             if (line[current + 1] == '(') lexer_lexQuotedParen(current + 1, tokens, t_str, line);
             else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
+        else if (t == '\"'){
+            char t_str[MAX_WORD_LENGTH];
+            t_str[0] = t;
+            t_str[1] = '\0';
+            lexer_lexString(current + 1, tokens, t_str, line);
+        }
         else if (t == '.'){
             lexer_addToken(tokens, ".\0", (TokenType)DOT);
             lexer_lex(current + 1, tokens, line);
@@ -215,6 +221,23 @@ void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const ch
             strncat(lexeme, t_str, 1);
             lexer_lexQuotedParen(current + 1, tokens, lexeme, line);
         }
+    }
+}
+
+void lexer_lexString(int current, TokenList *tokens, char *lexeme, const char *line){
+    if (current < (int)strlen(line)){
+        char t = line[current];
+        char *t_str = &t;
+        strncat(lexeme, t_str, 1);
+        if (t == '\"'){
+            lexer_addToken(tokens, lexeme, DOUBLE_QUOTE);
+            lexer_lex(current, tokens, line);
+        }
+        if (strlen(lexeme) == (MAX_WORD_LENGTH - 1)){
+            fprintf(stderr, "String that begins with %s cannot be greater than %d characters\n.", lexeme, MAX_WORD_LENGTH);
+            return;
+        }
+        lexer_lexString(current + 1, tokens, lexeme, line);
     }
 }
 

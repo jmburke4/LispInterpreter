@@ -52,6 +52,8 @@ void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line
 /// @param line The line to scan
 void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const char *line);
 
+void lexer_lexString(int current, TokenList *tokens, char *lexeme, const char *line);
+
 /// @brief Adds in explicit opening and close parentheses to the token list
 /// @param list A pointer to the TokenList to add parentheses to
 void lexer_normalizeList(TokenList *list);
