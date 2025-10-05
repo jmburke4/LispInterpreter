@@ -268,6 +268,13 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
             return exp;
         }
+        if (isCons(car(exp)) && isIdentifier(car(car(exp)))){
+            if (strcmp("lambda", car(car(exp))->atom.strVal) == 0){
+                define(env, car(exp));
+                SExpression *lambda = atom(A_ID, "lambda");
+                return eval(cons(lambda, cdr(exp)), env);
+            }
+        }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
     }
     else if (isAtom(exp)){
