@@ -8,7 +8,7 @@
 
 SExpression *copyExp(SExpression *exp){
     if (isNil(exp)){
-        fprintf(stderr, "Error: tried copying nil list\n");
+        //fprintf(stderr, "Error: tried copying nil list\n");
         return NULL;
     }
     else if (isAtom(exp)){

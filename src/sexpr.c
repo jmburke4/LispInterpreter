@@ -46,13 +46,13 @@ SExpression *add(SExpression *exp){
     return atom(resultType, resultVal);
 }
 
-SExpression *and(SExpression *exp){
+SExpression *and(SExpression *exp, Environment *env){
     if (isAtom(exp)){
         fprintf(stderr, "Atom passed to and()\n");
         return NULL;
     }
-    if (isNil(car(exp)) && isNil(cdr(exp))) return TRUE;
-    if (isNil(car(exp)) || isNil(cdr(exp))) return NULL;
+    if (isNil(eval(car(exp), env))) return NULL;
+    else if (isNil(eval(cdr(exp), env))) return NULL;
     return TRUE;
 }
 
@@ -207,6 +207,11 @@ SExpression *eval(SExpression *exp, Environment *env){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
+            // delay evaluation of expression in and() and or() and quote()
+            if (strcmp(identifier, "and") == 0) return and(cdr(exp), env);
+            else if (strcmp(identifier, "or") == 0) return or(cdr(exp), env);
+            else if (strcmp(identifier, "quote") == 0) return cdr(exp);
+
             SExpression *params = eval(exp->cons.cdr, env);
             if (strcmp(identifier, "+") == 0) return add(params);
             else if (strcmp(identifier, "-") == 0) return subtract(params);
@@ -225,10 +230,7 @@ SExpression *eval(SExpression *exp, Environment *env){
             else if (strcmp(identifier, "cadr") == 0) return cadr(params);
             else if (strcmp(identifier, "caddr") == 0) return caddr(params);
             else if (strcmp(identifier, "cons") == 0) return cons(car(params), cdr(params));
-            else if (strcmp(identifier, "quote") == 0) return cdr(exp);
             else if (strcmp(identifier, "not") == 0) return not(eval(params, env));
-            else if (strcmp(identifier, "and") == 0) return and(params);
-            else if (strcmp(identifier, "or") == 0) return or(params);
             return exp;
         }
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
@@ -532,14 +534,13 @@ SExpression *not(SExpression *exp){
     else return NULL;
 }
 
-SExpression *or(SExpression *exp){
+SExpression *or(SExpression *exp, Environment *env){
     if (isAtom(exp)){
         fprintf(stderr, "Atom passed to or()\n");
         return NULL;
     }
-    if (isNil(car(exp))){
-        if (isNil(cdr(exp))) return NULL;
-        else return TRUE;
+    if (isNil(eval(car(exp), env))){
+        if (isNil(eval(cdr(exp), env))) return NULL;
     }
     return TRUE;
 }

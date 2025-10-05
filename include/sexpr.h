@@ -10,8 +10,9 @@ SExpression *add(SExpression *exp);
 
 /// @brief If ```car(exp)``` and ```cdr(exp)```
 /// @param exp The cons cell to evaluate
+/// @param env The environment to evaluate the expression in
 /// @return ```()``` or ```true```
-SExpression *and(SExpression *exp);
+SExpression *and(SExpression *exp, Environment *env);
 
 /// @brief Initializes an Atom struct
 /// @param type The type of Atom to initialize
@@ -151,8 +152,9 @@ SExpression *not(SExpression *exp);
 
 /// @brief If ```car(exp)``` or ```cdr(exp)```
 /// @param exp The cons cell to evaluate
+/// @param env The environment to evaluate the expression in
 /// @return ```()``` or ```true```
-SExpression *or(SExpression *exp);
+SExpression *or(SExpression *exp, Environment *env);
 
 /// @brief Returns the numerical difference between the atoms in the car and cdr
 /// @param exp Must be a cons cell with two atoms and no nil terminator
