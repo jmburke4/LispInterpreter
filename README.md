@@ -1,10 +1,10 @@
 # Lisp Interpreter in C - Jackson Burke, Fall 2025 #
 
-*Please note that VSCode has a built-in markdown previewer/renderer that does not require any extensions. You may preview a markdown file by secondary clicking the filename within VSCode and selecting "Open Preview".*
+Please note that VSCode has a built-in markdown previewer/renderer that does not require any extensions. You may preview a markdown file by secondary clicking the filename within VSCode and selecting "Open Preview".
 
 ## Introduction ##
 
-This *README.md* contains information on the repository structure of my project as well as instructions for building and running the project, and a list of known bugs and limitations. Please see *Testing.md* for the testing I have done. 
+This README.md contains information on the repository structure of my project as well as instructions for building and running the project, and a list of known bugs and limitations. Please see Testing.md for the testing I have done. 
 
 View on [Github](https://github.com/jmburke4/LispInterpreter).
 
@@ -48,7 +48,7 @@ View on [Github](https://github.com/jmburke4/LispInterpreter).
 
 2. Navigate to the root directory of the repository (*LispInterpreter*) and run ```make``` to compile the header and source code files and link them into the executable (*a.exe*), this outputs everything into *LispInterpreter/bin*. This recursively copies the *tests* directory into the bin folder if the folder does not already exist; if you edit or update files in *LispInterpreter/tests* you must run ```make cpt``` (make copy tests), or alternatively ```make clean``` and then ```make``` for */bin/tests/* to be updated.
 
-3. Can run */bin/a.exe* with no arguments and it will enter the REPL. Can run */bin/a.exe* with one argument that is a relative or absolute filepath to a text file you would like it to process. The interpreter exits on reaching the end of file. See *Testing.md* for examples of passing a path to the program from the command line.
+3. Can run */bin/a.exe* with no arguments and it will enter the REPL. Can run */bin/a.exe* with one argument that is a relative or absolute filepath to a text file you would like it to process. The interpreter exits on reaching the end of file. See Testing.md for examples of passing a path to the program from the command line.
 
 ## The S-Expression Struct ##
 
