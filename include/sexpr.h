@@ -8,7 +8,7 @@
 /// @return An ```SExpression``` that is an ```Atom``` of type ```A_FLT``` or ```A_INT```
 SExpression *add(SExpression *exp);
 
-/// @brief If ```car(exp)``` and ```cdr(exp)```
+/// @brief If ```car(exp)``` and ```cdr(exp)``` are both not ```nil```
 /// @param exp The cons cell to evaluate
 /// @param env The environment to evaluate the expression in
 /// @return ```()``` or ```true```

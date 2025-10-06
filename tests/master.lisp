@@ -1,5 +1,3 @@
-; Testing for Sprint 5
-
 ; I will test the Equality operators first then use them for
 ; simplifying the testing of the mathematical operators later
 ; () denotes false
@@ -9,24 +7,24 @@
 
 ; EQ
 
-(eq 1 1) ; -> true
+(eq 1 1)
 (eq 1 2) ; -> ()
-(eq 1234567890 1234567890) ; -> true
+(eq 1234567890 1234567890)
 
-(eq 1.0 1.0) ; -> true
+(eq 1.0 1.0)
 (eq 1.0 2.0) ; -> ()
-(eq 1.1 1.1) ; -> true
-(eq 1.1234567890 1.1234567890) ; -> true
+(eq 1.1 1.1)
+(eq 1.1234567890 1.1234567890)
 
-(eq (true) true) ; -> true
+(eq (true) true)
 (eq (true) ()) ; -> ()
 (eq () true) ; -> ()
-(eq () ()) ; -> ()
-(eq (not ()) (not ())) ; -> true
-(eq (not (true)) (not (true))) ; -> true
+(eq () ())
+(eq (not ()) (not ()))
+(eq (not (true)) (not (true)))
 
 (not (true)) ; -> ()
-(not ()) ; -> true
+(not ())
 
 
 ; Please note that the types of the atoms being compared must be the same
@@ -35,33 +33,31 @@
 (eq 1 1.0) ; -> ()
 (eq 1.0 1) ; -> ()
 (eq 1 ()) ; -> ()
-(eq () ()) ; -> true
-(eq (true) true) ; -> true
+(eq () ())
+(eq (true) true)
 (eq (true) ()) ; -> ()
 (eq () true) ; -> ()
 (set x 3) ; -> 3
-; (eq "abc" "abc") ; -> true ; Strings not supported yet
-(eq (x) x) ; -> true ; Comparing nils not supported yet
+(eq (x) x)
 
 
 
 ; NEQ
 
 (neq 1 1) ; -> ()
-(neq 1 2) ; -> true
+(neq 1 2)
 (neq 1234567890 1234567890) ; -> ()
 
 (neq 1.0 1.0) ; -> ()
-(neq 1.0 2.0) ; -> true
+(neq 1.0 2.0)
 (neq 1.1 1.1) ; -> ()
 (neq 1.1234567890 1.1234567890) ; -> ()
 
-(neq 1 1.0) ; -> true
-(neq 1.0 1) ; -> true
-(neq 1 ()) ; -> true
+(neq 1 1.0)
+(neq 1.0 1)
+(neq 1 ())
 (neq () ()) ; -> ()
-; (neq "abc" "abc") ; -> () ; Strings not supported yet
-; (neq x x) ; -> () ; Comparing nils not supported yet
+(neq x x) ; -> () 
 
 
 
@@ -99,13 +95,96 @@
 
 ; LTE
 
+(eq (true) (lte 3 4))
+(eq (true) (lte 4 4))
+(eq () (lte 5 4))
+(eq () (lte 3 -4))
+(eq (true) (lte -4 -4))
+(eq (true) (lte -5 -4))
+
+(eq (true) (lte 3.0 4.0))
+(eq (true) (lte 4.0 4.0))
+(eq () (lte 5.0 4.0))
+(eq () (lte 3.0 -4.0))
+(eq (true) (lte -4.0 -4.0))
+(eq (true) (lte -5.0 -4.0))
+
+(eq (true) (lte 3.0 4))
+(eq (true) (lte 4.0 4))
+(eq () (lte 5.0 4))
+(eq () (lte 3.0 -4))
+(eq (true) (lte -4.0 -4))
+(eq (true) (lte -5.0 -4))
+
+(eq (true) (lte 3 4.0))
+(eq (true) (lte 4 4.0))
+(eq () (lte 5 4.0))
+(eq () (lte 3 -4.0))
+(eq (true) (lte -4 -4.0))
+(eq (true) (lte -5 -4.0))
 
 
 ; GT
 
+(eq () (gt 3 4))
+(eq () (gt 4 4))
+(eq (true) (gt 5 4))
+(eq (true) (gt 3 -4))
+(eq () (gt -4 -4))
+(eq () (gt -5 -4))
+
+(eq () (gt 3.0 4.0))
+(eq () (gt 4.0 4.0))
+(eq (true) (gt 5.0 4.0))
+(eq (true) (gt 3.0 -4.0))
+(eq () (gt -4.0 -4.0))
+(eq () (gt -5.0 -4.0))
+
+(eq () (gt 3.0 4))
+(eq () (gt 4.0 4))
+(eq (true) (gt 5.0 4))
+(eq (true) (gt 3.0 -4))
+(eq () (gt -4.0 -4))
+(eq () (gt -5.0 -4))
+
+(eq () (gt 3 4.0))
+(eq () (gt 4 4.0))
+(eq (true) (gt 5 4.0))
+(eq (true) (gt 3 -4.0))
+(eq () (gt -4 -4.0))
+(eq () (gt -5 -4.0))
+
 
 
 ; GTE
+
+(eq () (gte 3 4))
+(eq (true) (gte 4 4))
+(eq (true) (gte 5 4))
+(eq (true) (gte 3 -4))
+(eq (true) (gte -4 -4))
+(eq () (gte -5 -4))
+
+(eq () (gte 3.0 4.0))
+(eq (true) (gte 4.0 4.0))
+(eq (true) (gte 5.0 4.0))
+(eq (true) (gte 3.0 -4.0))
+(eq (true) (gte -4.0 -4.0))
+(eq () (gte -5.0 -4.0))
+
+(eq () (gte 3.0 4))
+(eq (true) (gte 4.0 4))
+(eq (true) (gte 5.0 4))
+(eq (true) (gte 3.0 -4))
+(eq (true) (gte -4.0 -4))
+(eq () (gte -5.0 -4))
+
+(eq () (gte 3 4.0))
+(eq (true) (gte 4 4.0))
+(eq (true) (gte 5 4.0))
+(eq (true) (gte 3 -4.0))
+(eq (true) (gte -4 -4.0))
+(eq () (gte -5 -4.0))
 
 
 
@@ -206,7 +285,7 @@
 (eq 3 (/ 9 (/ 9 3)))
 (eq 1 (/ (/ 15 3) 5))
 
-(eq 3.707 (/ 456 123.0)) ; Not sure how rounding will be handled
+(/ 456 123.0) ; -> ~3.7
 (eq 3.0 (/ 9 (/ 9 3.0)))
 (eq 1.0 (/ (/ 15.0 3) 5))
 
@@ -250,3 +329,12 @@
 (eq (+ 3.0 a) 10.0)
 (eq 21.0 (* (a) 3.0))
 (eq (* 3.0 a) 21.0)
+
+; quote
+
+(set a 3) ; -> 3
+('a) ; -> (a)
+(+ 3 'a) ; -> ()
+(+ 3 a) ; -> 6
+
+

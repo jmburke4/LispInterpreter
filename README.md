@@ -4,7 +4,9 @@
 
 ## Introduction ##
 
-This *README.md* contains information on the repository structure of my project as well as instructions for building and running the project, and a list of known bugs and limitations. Please see *Testing.md* for the testing I have done for Sprint 1.
+This *README.md* contains information on the repository structure of my project as well as instructions for building and running the project, and a list of known bugs and limitations. Please see *Testing.md* for the testing I have done. 
+
+View on [Github](https://github.com/jmburke4/LispInterpreter).
 
 ## Repository Structure ##
 
@@ -12,49 +14,60 @@ This *README.md* contains information on the repository structure of my project 
 - .gitignore
 - Makefile *- run* ```make``` *to compile and link into an executable or* ```make clean``` *to remove the bin directory*
 - README.md *- this file*
-- Testing.md *- the description of my testing of Sprint 1 functionality*
+- Testing.md *- the description of my testing of Lisp functionality*
 - /.vscode
     - launch.json *- for debugger*
     - settings.json *- IDE settings*
     - tasks.json *- for debugger*
 - /include
+    - env.h *- Functions related to managing variable and function declarations in different scopes*
     - lexer.h *- lexing related types and function signatures*
     - parser.h *- parsing related types and function signatures*
+    - sexpr.h *- The SExpression-related functions and eval*
+    - tester.h *- This was used for programmatically building SExpressions before parsing was complete, it is not actively used by by the interpeter other than for development purposes*
+    - types.h *- Holds all type definitons including the ```SExpression```*
     - util.h *- utility types and function signatures*
 - /src
-    - lexer.c *- lexing related function definitions*
-    - main.c *- the main entry point of the program*
-    - parser.c *- parsing related function definitions*
-    - util.c *- utility related function definitions*
+    - env.c *- Functions related to managing variable and function declarations in different scopes*
+    - lexer.c *- lexing related types and function signatures*
+    - main.c *- The main entry point of the program, also handles file processing and the REPL*
+    - parser.c *- parsing related types and function signatures*
+    - sexpr.c *- The SExpression-related functions and eval*
+    - tester.c *- This was used for programmatically building SExpressions before parsing was complete, it is not actively used by by the interpeter other than for development purposes*
+    - util.c *- utility types and function signatures*
 - /tests
-    - s1a.txt *-* ```(cons 'a '(b c))```
-    - s1b.txt *-* ```(cons 'a '())```
-    - s1c.txt *-* ```(cons 12 '(12 34))```
-    - s1d.txt *-* ```(cons 12.34 '(56.7 8.9))```
-    - s1e.txt *-* ```(cons 'hello '(there general) 'kenobi)```
+    - andor.lisp
+    - eq.lisp
+    - func.lisp
+    - ifcond.lisp
+    - master.lisp
 
 ## To Run ##
 
-0. This project has been developed and tested with the gcc compiler in a Bash shell using Cygwin64 on Windows.
+1. This project has been developed and tested with the gcc compiler in a Bash shell using Cygwin64 on Windows.
 
-1. Navigate to the root directory of the repository (*LispInterpreter*) and run ```make``` to compile the header and source code files and link them into the executable (*a.exe*), this outputs everything into *LispInterpreter/bin*. This recursively copies the *tests* directory into the bin folder if the folder does not already exist; if you edit or update files in *LispInterpreter/tests* you must run ```make clean``` and then ```make``` for */bin/tests/* to be updated.  
+2. Navigate to the root directory of the repository (*LispInterpreter*) and run ```make``` to compile the header and source code files and link them into the executable (*a.exe*), this outputs everything into *LispInterpreter/bin*. This recursively copies the *tests* directory into the bin folder if the folder does not already exist; if you edit or update files in *LispInterpreter/tests* you must run ```make cpt``` (make copy tests), or alternatively ```make clean``` and then ```make``` for */bin/tests/* to be updated.
 
-2. Can run */bin/a.exe* with no arguments and it will run the default text file (currently */bin/tests/s1a.txt*). Can run */bin/a.exe* with one argument that is a relative or absolute filepath to a text file you would like it to process. The program currently only processes the top line of the text file. You may edit the line in */bin/tests/s1a.txt* to pass your own lisp expressions to the interpeter, or you can create a new text file with your lisp expressions and run the interpreter with the filepath to your new file as a command line argument. See *Testing.md* for examples of passing a path to the program from the command line.
+3. Can run */bin/a.exe* with no arguments and it will enter the REPL. Can run */bin/a.exe* with one argument that is a relative or absolute filepath to a text file you would like it to process. The interpreter exits on reaching the end of file. See *Testing.md* for examples of passing a path to the program from the command line.
 
 ## The S-Expression Struct ##
 
-In */include/parser.h* I have defined the following enum and struct: 
+In */include/types.h* I have defined the following enum and struct: 
 
 ```c
-typedef enum { ATOM, CONS } SExprType;
-
+/// @brief A struct representing an S-Expression in Lisp
 typedef struct SExpression {
+    /// @brief An enum to track whether an ```SExpression``` is an ```Atom``` or ```Cons``` cell
     SExprType type;
     union {
-        char* atom;
+        /// @brief Holds numbers, symbols, and strings
+        Atom atom;
+        /// @brief Holds pointers to other ```SExpression``` structs
         struct {
-            struct SExpression* car;
-            struct SExpression* cdr;
+            /// @brief A pointer to the car of the ```Cons``` cell
+            struct SExpression *car;
+            /// @brief A pointer to the cdr of the ```Cons``` cell
+            struct SExpression *cdr;
         } cons;
     };
 } SExpression;
@@ -64,11 +77,42 @@ typedef struct SExpression {
 
 ## Known Issues / Limitations ##
 
-In no particular order:
+In order of documented on Github:
 
-- File processing only works for the top line of a text file
-- No working REPL
-- Memory leak/pointer issue somewhere (in *lexer.c*?) that requires each token to be printed via ```lexer_printTokens()``` in order for the parser to work properly
-- A preceding space is printed before each element, such as after an open parentheses is printed, or when there is a ```nil``` that is not printed to the output
-- There is a 256 character limit (255 plus the ```\0``` terminator) imposed by ```util_readFile()``` in */src/util.c*. This means the interpreter can only read lisp expressions that are 255 characters or shorter.
-- No automation for running tests
+There is a 256 character limit (255 plus the \0 terminator) imposed by the file reader in the main method. This means the interpreter can only read lisp expressions that are 255 characters or shorter. It also currently ends scanning when reaching a new line, so all contiguous lisp expressions may only span one line.
+
+Similar to the above issue, there is a maximum word length of 24 characters. This means that strings may only be 21 characters long (2 for the quotes plus 1 for the \0 terminator), numbers and identifiers may only be 21 characters long.
+
+Negative number literals are supported, but the minus sign cannot be used to directly negate the numerical value of a number, although multiply by negative one works.
+```lisp
+>(set a 3)
+3
+
+>(* -1 a)
+-3
+```
+
+Most Atoms that are printed are printed without surrounding quotation marks. This needs to be updated to print ```(true)``` or ```(1)``` for consistency.
+
+Certain float literals round improperly:
+```lisp
+>(set a 55.6)
+55.599998
+
+>(a)
+55.599998
+```
+
+If in the REPL, you must be careful to use the backspace key instead of arrowing back and writing over your input or the scanner will be unable to lex the keyboard input.
+
+There are intermittent parsing issues where an ```Atom``` in the ```car``` position of an ```SExpression``` will not evaluate unless it is enclosed in parentheses. I have not been able to narrow down when and when it doesn't happen.
+```lisp
+>(set a 1)
+1
+
+>(+ a 1)
+()
+
+>(+ (a) 1)
+2
+```
