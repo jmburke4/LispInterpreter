@@ -7,12 +7,9 @@
 #include "env.h"
 
 SExpression *copyExp(SExpression *exp){
-    if (isNil(exp)){
-        //fprintf(stderr, "Error: tried copying nil list\n");
-        return NULL;
-    }
+    if (isNil(exp)) return NULL;
     else if (isAtom(exp)){
-        // this is easy
+        // A buffer to store a C-string
         char buffer[MAX_WORD_LENGTH];
         switch (exp->atom.type){
             case A_STR:
@@ -29,10 +26,7 @@ SExpression *copyExp(SExpression *exp){
                 return NULL;
         }
     }
-    else if (isCons(exp)){
-        // This is easier
-        return cons(copyExp(exp->cons.car), copyExp(exp->cons.cdr));
-    }
+    else if (isCons(exp)) return cons(copyExp(exp->cons.car), copyExp(exp->cons.cdr));
     return NULL;
 }
 
@@ -66,7 +60,9 @@ Environment *localEnvironment(Environment* previous){
 
 Variable *lookup(Environment *environment, char *name){
     Variable *iterator = environment->top;
+    // Loop through all the variables on the stack, starting from the last pushed
     while (iterator != NULL){
+        // Return new variables so that freeing the expression later on doesn't erase the variable from the stack
         if (strcmp(iterator->name, name) == 0) return newVariable(name, iterator->type, iterator->exp, iterator->param);
         iterator = (Variable*)iterator->next;
     }
@@ -84,7 +80,7 @@ Variable *newVariable(char* name, int type, SExpression *exp, SExpression *param
     strncpy(var->name, nameBuffer, nameLength);
     var->type = type;
 
-    // Now I have to do the same thing for the S-Expression
+    // Call copyExp to recurisvely copy the SExpressions
     if (exp != NULL) var->exp = copyExp(exp);
     else var->exp = NULL;
     if (type == FUNC && params != NULL) var->param = copyExp(params);
@@ -93,6 +89,7 @@ Variable *newVariable(char* name, int type, SExpression *exp, SExpression *param
 }
 
 SExpression *set(Environment *environment, char* name, SExpression *exp){
+    // Create a new variable and return a pointer to it
     Variable *var = newVariable(name, VAR, exp, NULL);
     var->next = (struct Variable*)environment->top;
     environment->top = var;

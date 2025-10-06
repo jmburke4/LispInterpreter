@@ -8,6 +8,7 @@ void parser_advance();
 
 /// @brief Recursively frees the atoms in an ```SExpression```
 /// @param expr The ```SExpression``` to free
+/// @return A ```NULL``` pointer
 SExpression *parser_clearExpression(SExpression *expr);
 
 /// @brief Parses an ```SExpression```

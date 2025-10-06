@@ -84,6 +84,8 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             else lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == '\"'){
+            // Lex strings like "Hello"
+            // The quotes are part of the string value
             char t_str[MAX_WORD_LENGTH];
             t_str[0] = t;
             t_str[1] = '\0';
@@ -95,10 +97,12 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
         }
         else if (t == '-'){
             if (line[current + 1] == ' '){
+                // To indicate subtraction
                 lexer_addToken(tokens, "-\0", (TokenType)MINUS);
                 lexer_lex(current + 1, tokens, line);
             } 
             else {
+                // To indicate a negative number
                 char t_str[MAX_WORD_LENGTH];
                 t_str[0] = t;
                 t_str[1] = '\0';
@@ -134,12 +138,11 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
             lexer_lexAlpha(current + 1, tokens, t_str, line);
         }
         else if (t == ' '){
-            // skip space
+            // skip spaces
             lexer_lex(current + 1, tokens, line);
         }
         else if (t == '\r' || t == '\n' || t == ';' || t == 7){
             // Exit on carriage return or new line or comment
-            // Where am I getting char 7 (BEL) from?
         }
         else{
             fprintf(stderr, "ERROR LEXING CHAR: %c (%d)\n", t, t);
@@ -148,6 +151,7 @@ void lexer_lex(int current, TokenList *tokens, const char *line){
 }
 
 void lexer_lexAlpha(int current, TokenList *tokens, char *lexeme, const char *line){
+    // Lex alphabetical characters for identifiers or strings
     if (current < (int)strlen(line)){
         char t = line[current];
         if (util_isAlphaNum(t)){
@@ -180,8 +184,10 @@ void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line
             lexer_lexNum(current + 1, tokens, lexeme, line, hasDot);
         }
         else if (t == '.'){
+            // For lexing decimals
             char *t_str = &t;
             strncat(lexeme, t_str, 1);
+            // Set the hasDot flag to determine the token type
             lexer_lexNum(current + 1, tokens, lexeme, line, 1);
         }
         else {
@@ -238,60 +244,6 @@ void lexer_lexString(int current, TokenList *tokens, char *lexeme, const char *l
             return;
         }
         lexer_lexString(current + 1, tokens, lexeme, line);
-    }
-}
-
-void lexer_normalizeList(TokenList *list){
-    // This function will convert (a b c) -> (a (b c))
-    // If you have a function call with parameters, you must use explicit parentheses
-    //      ex. (quote a b) will be normalized to (quote (a b)) // which is WRONG
-    //          You must do ((quote a) b) -> ((quote a) b)
-
-    int nonParenTokens = list->size - list->oparen - list->cparen;
-    if (list->oparen != list->cparen) {
-        fprintf(stderr, "Mismatching number of parentheses: %d OPEN, %d CLOSE\n", list->oparen, list->cparen);
-        return;
-    }
-    else if ((nonParenTokens - 1) == list->oparen){
-        // fprintf(stdout, "List already normalized.\n");
-    }
-    else {
-        int missingPairs = (nonParenTokens - 1) - list->oparen;
-        // printf("Missing %d sets of parentheses.\n", missingPairs);
-        Token* iter = list->first;
-        int count = 0;
-
-        while (iter != NULL && missingPairs > 0){
-            if (iter->type != (TokenType)OPEN_PAREN && iter->type != (TokenType)CLOSE_PAREN){
-                Token* nxt = (Token*)iter->next;
-                if (nxt->type != (TokenType)CLOSE_PAREN) count++;
-                if (count == 2){
-                    // add parentheses
-                    Token* newO = lexer_initToken("(\0", (TokenType)OPEN_PAREN);
-                    Token* newC = lexer_initToken(")\0", (TokenType)CLOSE_PAREN);
-                    
-                    // Insert opening parentheses before current token
-                    Token* prev = (Token*)iter->prev;
-                    prev->next = (struct Token*)newO;
-                    newO->prev = iter->prev;
-                    iter->prev = (struct Token*)newO;
-                    newO->next = (struct Token*)iter;
-
-                    // Add closing parentheses to the end of the list
-                    newC->prev = (struct Token*)list->last;
-                    list->last->next = (struct Token*)newC;
-                    list->last = newC;
-
-                    list->size += 2;
-                    list->oparen++;
-                    list->cparen++;
-
-                    count--;
-                }
-            }
-            iter = (Token*)iter->next;
-            missingPairs = (nonParenTokens - 1) - list->oparen;
-        }
     }
 }
 

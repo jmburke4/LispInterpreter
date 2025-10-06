@@ -14,8 +14,8 @@ int lexer_addToken(TokenList *list, char *val, TokenType type);
 /// @param list The TokenList to clear
 void lexer_clearTokenList(TokenList *list);
 
-/// @brief Allocate memory for a new token
-/// @param val The char or c-string value of the token
+/// @brief Allocate memory for a and initialize a new token
+/// @param val The value of the token stored as a string, then later casted to the appropriate type
 /// @param type The token type
 /// @return A pointer to a new token
 Token *lexer_initToken(char *val, TokenType type);
@@ -26,7 +26,7 @@ TokenList *lexer_initTokenList();
 
 /// @brief The recursive function to process each character
 /// @param current The current index within the line being scanned
-/// @param tokens The list of tokens
+/// @param tokens The list of tokens to add to
 /// @param line The line to scan
 void lexer_lex(int current, TokenList *tokens, const char *line);
 
@@ -52,17 +52,19 @@ void lexer_lexNum(int current, TokenList *tokens, char *lexeme, const char *line
 /// @param line The line to scan
 void lexer_lexQuotedParen(int current, TokenList *tokens, char *lexeme, const char *line);
 
+/// @brief Adds characters until a double quote is encountered
+/// @param current The current index within the line being scanned
+/// @param tokens The list of tokens to append to
+/// @param lexeme The multi-char string starting with a quote to be scanned
+/// @param line The line to scan
+/// @note Will exit lexing if a double quote is not found before reaching the ```MAX_WORD_LENGTH```
 void lexer_lexString(int current, TokenList *tokens, char *lexeme, const char *line);
-
-/// @brief Adds in explicit opening and close parentheses to the token list
-/// @param list A pointer to the TokenList to add parentheses to
-void lexer_normalizeList(TokenList *list);
 
 /// @brief Prints each token in a TokenList
 /// @param tokens A TokenList struct with a pointer to the first token
 void lexer_printTokens(TokenList *tokens);
 
-/// @brief Lexes tokens from a line of code
+/// @brief Lexes tokens from a line of input
 /// @param line A string pointer pointing to a line of code
 /// @param list The list of tokens to append tokens to
 void lexer_scanTokens(const char *line, TokenList *list);

@@ -13,6 +13,7 @@ void parser_advance() { if (currentToken != NULL) currentToken = (Token*)current
 SExpression *parser_clearExpression(SExpression *expr){
     if (expr != NULL){
         if (expr->type == (SExprType)CONS){
+            // Recursively clear child cells before freeing the current cell
             parser_clearExpression(expr->cons.car);
             parser_clearExpression(expr->cons.cdr);
         }
@@ -26,7 +27,8 @@ SExpression *parser_parseExpression() {
 
     SExpression *exp = NULL;
     switch (currentToken->type){
-        case (TokenType)STRING: // These are single word identifiers, strings are handled via DOUBLE_QUOTE
+        case (TokenType)STRING: 
+            // These are single word identifiers, strings are handled via DOUBLE_QUOTE
             Token *prev = (Token*)currentToken->prev;
             if (prev->type == OPEN_PAREN && prev->prev != NULL) prev = (Token*)prev->prev;
             // Treat any token that comes directly after the set command as a string instead
@@ -44,23 +46,25 @@ SExpression *parser_parseExpression() {
             break;
 
         case (TokenType)OPEN_PAREN:
+            // Parse cons cell
             parser_advance();
             exp = parser_parseExpression();
             break;
 
         case (TokenType)CLOSE_PAREN:
+            // return nil to end list
             return exp;
 
         case (TokenType)SINGLE_QUOTE:
             SExpression* quote = atom(A_ID, "quote\0");
             SExpression* quotedVal = atom(A_STR, currentToken->val + 1);
-            // Does this need to be NIL terminated or a dotted pair?
             exp = cons(quote, cons(quotedVal, NULL));
             break;
 
         case (TokenType)DOUBLE_QUOTE:
             exp = atom(A_STR, currentToken->val);
             break;
+
         case (TokenType)PLUS:
         case (TokenType)MINUS:
         case (TokenType)STAR:

@@ -7,17 +7,10 @@
 #define UTIL_TRUE 1
 #define UTIL_FALSE 0 
 
-#define MAX_WORD_LENGTH 12
+/// A constant used for declaring string buffers
+#define MAX_WORD_LENGTH 24
 
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-// Usage: printf(ANSI_COLOR_RED "This text is red." ANSI_COLOR_RESET "\n");
-
+/// @brief Enums used to determine a type of ```Token```
 typedef enum {
     OPEN_PAREN, CLOSE_PAREN,
     
@@ -33,21 +26,33 @@ typedef enum {
     STRING, INT, FLOAT
 } TokenType;
 
+/// @brief Represents a token lexed from input
 typedef struct {
+    /// @brief The string value of the token
     char *val;
+    /// @brief The ```TokenType``` enum of the ```Token```
     TokenType type;
+    /// @brief A pointer to the previous ```Token```
     struct Token *prev;
+    /// @brief A pointer to the next ```Token```
     struct Token *next;
 } Token;
 
+/// @brief Holds metadata about a linked list of ```Token```
 typedef struct {
+    /// @brief The number of ```Token``` in the list
     int size;
+    /// @brief The number of Opening Parentheses in the list
     int oparen;
+    /// @brief The number of Closing Parentheses in the list
     int cparen;
+    /// @brief A pointer to the first ```Token``` in the list
     Token *first;
+    /// @brief A pointer to the last ```Token``` in the list
     Token *last;
 } TokenList;
 
+/// @brief Returns a pointer to an ```SExpression``` with the string value ```TRUE```
 #define TRUE atom(A_ID, "true")
 
 /// @brief An enum for the type of an ```SExpression```
@@ -58,6 +63,7 @@ typedef enum { A_ID, A_STR, A_INT, A_FLT } AtomType;
 
 /// @brief A struct representing an Atom in Lisp
 typedef struct {
+    /// @brief An enum tracking the data type of the ```Atom```
     AtomType type;
     union {
         char *strVal;
@@ -68,11 +74,16 @@ typedef struct {
 
 /// @brief A struct representing an S-Expression in Lisp
 typedef struct SExpression {
+    /// @brief An enum to track whether an ```SExpression``` is an ```Atom``` or ```Cons``` cell
     SExprType type;
     union {
-        Atom atom; // for symbols, numbers, strings
+        /// @brief Holds numbers, symbols, and strings
+        Atom atom;
+        /// @brief Holds pointers to other ```SExpression``` structs
         struct {
+            /// @brief A pointer to the car of the ```Cons``` cell
             struct SExpression *car;
+            /// @brief A pointer to the cdr of the ```Cons``` cell
             struct SExpression *cdr;
         } cons;
     };
@@ -80,12 +91,13 @@ typedef struct SExpression {
 
 /// @brief This represents a variable held in the environment
 typedef struct {
+    /// @brief An enum to track whether a ```Variable``` represents just a variable object or a function definition
     enum { VAR, FUNC } type;
     /// @brief The c-string to lookup the ```Variable``` by
     char* name;
     /// @brief The ```SExpression``` value of the variable
     SExpression *exp;
-
+    /// @brief An ```SExpression``` representing the parameters for a function
     SExpression *param;
     /// @brief A pointer to the next ```Variable``` on the stack
     struct Variable *next;

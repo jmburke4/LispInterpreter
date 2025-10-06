@@ -61,6 +61,7 @@ SExpression *atom(AtomType type, char *val){
     atom->type = (SExprType)ATOM;
     atom->atom.type = type;
 
+    // Take a generic c-string as any input and cast it to the correct type
     switch (type){
         case (AtomType)A_STR:
         case (AtomType)A_ID:
@@ -96,17 +97,21 @@ SExpression *cdr(SExpression *exp){
 
 SExpression *cadr(SExpression *exp){
     if (isNil(exp) || isAtom(exp)) return NULL;
+    // By calling car and cdr each function handles nil or unexpected atoms
     return car(cdr(exp));
 }
 
 SExpression *caddr(SExpression *exp){
     if (isNil(exp) || isAtom(exp)) return NULL;
+    // By calling car and cdr each function handles nil or unexpected atoms
     return cadr(cdr(exp));
 }
 
 SExpression *cond(SExpression *exp, Environment *env){
     if (exp == NULL) return NULL;
+    // If the condition in the car is true, return the expression in the cadr
     if (eval(car(exp), env) != NULL) return eval(cadr(exp), env);
+    // else recursively evalute the cdr(cdr)
     return cond(cdr(cdr(exp)), env);
 }
 
@@ -120,8 +125,6 @@ SExpression *cons(SExpression* car, SExpression* cdr){
 
 SExpression *divide(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to divide() must be a dotted pair\n");
         return NULL;
     }
@@ -167,8 +170,6 @@ SExpression *eq(SExpression *exp){
         if (exp->cons.car == NULL || exp->cons.cdr == NULL) return NULL;
     }
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to eq() must be a dotted pair\n");
         return NULL;
     }
@@ -213,7 +214,7 @@ SExpression *eval(SExpression *exp, Environment *env){
             char identifier[MAX_WORD_LENGTH];
             strncpy(identifier, exp->cons.car->atom.strVal, strlen(exp->cons.car->atom.strVal) + 1);
 
-            // delay evaluation of expression in and(), or(), if(), cond(), quote()
+            // delay evaluation of expression in and(), or(), if(), cond(), quote(), define()
             // and do not allow overload
             if (strcmp(identifier, "and") == 0) return and(cdr(exp), env);
             else if (strcmp(identifier, "or") == 0) return or(cdr(exp), env);
@@ -224,10 +225,7 @@ SExpression *eval(SExpression *exp, Environment *env){
 
             Variable *id = lookup(env, car(exp)->atom.strVal);
             if(id != NULL && id->type == FUNC){
-                // execute function and pass parameters
-                // push new environment
-                //   push new variables
-                //   eval func expression in that environment
+                // Push a local function-scoped environment
                 Environment *local = localEnvironment(env);
                 
                 // Loop through required and given parameters in function declaration
@@ -239,9 +237,12 @@ SExpression *eval(SExpression *exp, Environment *env){
                     givPar = cdr(givPar);
                 }
 
+                // Now evaluate the definition after the parameters have been passed to
+                // the new scope
                 return eval(id->exp, local);
             }
             else if (id->exp != NULL && id->type == VAR){
+                // Just a variable, return the evaluated value
                 if (isNil(cdr(exp))) return id->exp;
                 return cons(id->exp, eval(cdr(exp), env));
             }
@@ -269,12 +270,15 @@ SExpression *eval(SExpression *exp, Environment *env){
             return exp;
         }
         if (isCons(car(exp)) && isIdentifier(car(car(exp)))){
+            // If the lambda key word is found
+            // Declare a new function with the name lambda and then immediately execute it
             if (strcmp("lambda", car(car(exp))->atom.strVal) == 0){
                 define(env, car(exp));
                 SExpression *lambda = atom(A_ID, "lambda");
                 return eval(cons(lambda, cdr(exp)), env);
             }
         }
+        // recursively evaluate the car and cdr
         return cons(eval(exp->cons.car, env), eval(exp->cons.cdr, env));
     }
     else if (isAtom(exp)){
@@ -288,8 +292,6 @@ SExpression *eval(SExpression *exp, Environment *env){
 
 SExpression *gt(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to gt() must be a dotted pair\n");
         return NULL;
     }
@@ -319,14 +321,12 @@ SExpression *gt(SExpression *exp){
             fprintf(stderr, "Unrecognized AtomTypes in gt()\n");
             return NULL;
     }
-    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    if (result) resultExp = TRUE;
     return resultExp;
 }
 
 SExpression *gte(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to gte() must be a dotted pair\n");
         return NULL;
     }
@@ -356,7 +356,7 @@ SExpression *gte(SExpression *exp){
             fprintf(stderr, "Unrecognized AtomTypes in gte()\n");
             return NULL;
     }
-    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    if (result) resultExp = TRUE;
     return resultExp;
 }
 
@@ -430,8 +430,6 @@ SExpression *lif(SExpression *exp, Environment *env){
 
 SExpression *lt(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to lt() must be a dotted pair\n");
         return NULL;
     }
@@ -461,14 +459,12 @@ SExpression *lt(SExpression *exp){
             fprintf(stderr, "Unrecognized AtomTypes in lt()\n");
             return NULL;
     }
-    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    if (result) resultExp = TRUE;
     return resultExp;
 }
 
 SExpression *lte(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to lte() must be a dotted pair\n");
         return NULL;
     }
@@ -498,14 +494,12 @@ SExpression *lte(SExpression *exp){
             fprintf(stderr, "Unrecognized AtomTypes in lte()\n");
             return NULL;
     }
-    if (result) resultExp = TRUE; // Should this be quote t or 't somehow?
+    if (result) resultExp = TRUE;
     return resultExp;
 }
 
 SExpression *modulo(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to modulo() must be a dotted pair\n");
         return NULL;
     }
@@ -540,8 +534,6 @@ SExpression *modulo(SExpression *exp){
 
 SExpression *multiply(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to multiply() must be a dotted pair\n");
         return NULL;
     }
@@ -632,8 +624,6 @@ void print(SExpression *exp) {
 
 SExpression *subtract(SExpression *exp){
     if (!isDottedPair(exp)){
-        // Keeping error statements inline so that I can reenable them
-        // but not screw up tester.c
         fprintf(stderr, "S-Expression passed to subtract() must be a dotted pair\n");
         return NULL;
     }
