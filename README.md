@@ -25,7 +25,7 @@ View on [Github](https://github.com/jmburke4/LispInterpreter).
     - parser.h *- parsing related types and function signatures*
     - sexpr.h *- The SExpression-related functions and eval*
     - tester.h *- This was used for programmatically building SExpressions before parsing was complete, it is not actively used by by the interpeter other than for development purposes*
-    - types.h *- Holds all type definitons including the ```SExpression```*
+    - types.h *- Holds all type definitons including the *```SExpression```
     - util.h *- utility types and function signatures*
 - /src
     - env.c *- Functions related to managing variable and function declarations in different scopes*
